@@ -5,6 +5,7 @@
 'use strict';
 
 var React = require('react-native');
+
 var {
   AppRegistry,
   StyleSheet,
@@ -12,21 +13,36 @@ var {
   View,
 } = React;
 
+var TimerMixin = require('react-timer-mixin');
+
+var WelcomeScreen = require('./WelcomeScreen');
+var ListScreen = require('./ListScreen');
+
 var RCTZhiHuDaily = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.android.js
-        </Text>
-        <Text style={styles.instructions}>
-          Shake or press menu button for dev menu
-        </Text>
-      </View>
+  mixins: [TimerMixin],
+  componentDidMount: function() {
+    this.setTimeout(
+      () => {
+        this.setState({splashed: true});
+      },
+      2000
     );
+  },
+  getInitialState: function() {
+    return {
+      splashed: false,
+    };
+  },
+  render: function() {
+    if (!this.state.splashed) {
+      return (
+        <WelcomeScreen />
+      );
+    } else {
+      return (
+        <ListScreen />
+      );
+    }
   }
 });
 
