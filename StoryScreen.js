@@ -9,7 +9,7 @@ var {
   Image,
 } = React;
 
-var WebView = require('./WebView');
+var MyWebView = require('./WebView');
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
 
@@ -45,6 +45,9 @@ var StoryScreen = React.createClass({
       })
       .done();
   },
+  onWebViewScroll: function(event) {
+    console.log('GotEvent' + event);
+  },
   render: function() {
     var url = BASE_URL + this.props.story.id;
     if (this.state.isLoading) {
@@ -58,11 +61,12 @@ var StoryScreen = React.createClass({
     } else {
       if (this.state.detail) {
         return (
-          <View style={styles.container}>    
-            <WebView
+          <View style={styles.container}>
+            <MyWebView
               style={styles.content}
               html={this.state.detail.body}
-              css={this.state.detail.css[0]}/>
+              css={this.state.detail.css[0]}
+              onScrollChange={this.onWebViewScroll}/>
             <Image
               source={{uri: this.state.detail.image}}
               style={styles.headerImage} >

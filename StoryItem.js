@@ -29,7 +29,7 @@ var StoryItem = React.createClass({
             {/* $FlowIssue #7363964 - There's a bug in Flow where you cannot
               * omit a property or set it to undefined if it's inside a shape,
               * even if it isn't required */}
-            <Text style={styles.storyTitle} numberOfLines={5}>
+            <Text style={styles.storyTitle} numberOfLines={3}>
                 {this.props.story.title}
             </Text>
             <Image

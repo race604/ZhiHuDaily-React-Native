@@ -1,7 +1,5 @@
 package com.rctzhihudaily;
 
-import android.webkit.WebView;
-
 import com.facebook.react.uimanager.CatalystStylesDiffMap;
 import com.facebook.react.uimanager.SimpleViewManager;
 import com.facebook.react.uimanager.ThemedReactContext;
@@ -10,7 +8,7 @@ import com.facebook.react.uimanager.UIProp;
 /**
  * Created by Jing on 15/9/22.
  */
-public class ReactWebViewManager extends SimpleViewManager<WebView> {
+public class ReactWebViewManager extends SimpleViewManager<ObservableWebView> {
 
     public static final String REACT_CLASS = "RCTWebView";
 
@@ -29,12 +27,12 @@ public class ReactWebViewManager extends SimpleViewManager<WebView> {
     }
 
     @Override
-    protected WebView createViewInstance(ThemedReactContext reactContext) {
-        return new WebView(reactContext);
+    protected ObservableWebView createViewInstance(ThemedReactContext reactContext) {
+        return new ObservableWebView(reactContext);
     }
 
     @Override
-    public void updateView(final WebView webView, CatalystStylesDiffMap props) {
+    public void updateView(final ObservableWebView webView, CatalystStylesDiffMap props) {
         super.updateView(webView, props);
         if (props.hasKey(PROP_URL)) {
             webView.loadUrl(props.getString(PROP_URL));
