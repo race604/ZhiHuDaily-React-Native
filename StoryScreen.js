@@ -3,21 +3,27 @@
 var React = require('react-native');
 var {
   AppRegistry,
+  PixelRatio,
   StyleSheet,
   Text,
   View,
   Image,
 } = React;
 
+var precomputeStyle = require('precomputeStyle');
+
 var MyWebView = require('./WebView');
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
+var REF_HEADER = 'header';
+var PIXELRATIO = PixelRatio.get();
 
 var StoryScreen = React.createClass({
   getInitialState: function() {
     return({
       isLoading: false,
       detail: null,
+      scrollY: 0,
     });
   },
   componentDidMount: function() {
@@ -46,7 +52,10 @@ var StoryScreen = React.createClass({
       .done();
   },
   onWebViewScroll: function(event) {
-    console.log('GotEvent' + event);
+    //console.log('ScrollY: ' + event);
+    var scrollY = -event / PIXELRATIO;
+    var nativeProps = precomputeStyle({transform: [{translateY: scrollY}]});
+    this.refs[REF_HEADER].setNativeProps(nativeProps);
   },
   render: function() {
     var url = BASE_URL + this.props.story.id;
@@ -60,6 +69,11 @@ var StoryScreen = React.createClass({
       );
     } else {
       if (this.state.detail) {
+        // var headerStyle = {
+        //   height: 200,
+        //   flexDirection: 'row',
+        //   transform: [{translateY: this.state.scrollY}],
+        // };
         return (
           <View style={styles.container}>
             <MyWebView
@@ -68,6 +82,7 @@ var StoryScreen = React.createClass({
               css={this.state.detail.css[0]}
               onScrollChange={this.onWebViewScroll}/>
             <Image
+              ref={REF_HEADER}
               source={{uri: this.state.detail.image}}
               style={styles.headerImage} >
               <View style={styles.titleContainer}>

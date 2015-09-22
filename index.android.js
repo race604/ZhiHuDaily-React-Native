@@ -54,7 +54,6 @@ var RouteMapper = function(route, navigationOperations, onComponentRef) {
         <ToolbarAndroid
           navIcon={require('image!ic_back_white')}
           onIconClicked={navigationOperations.pop}
-          title={route.story.title}
           titleColor="white"
           style={styles.toolbar}
           actions={[]}/>
