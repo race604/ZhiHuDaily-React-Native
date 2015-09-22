@@ -25,7 +25,7 @@ var RCTZhiHuDaily = React.createClass({
       () => {
         this.setState({splashed: true});
       },
-      2000
+      50
     );
   },
   getInitialState: function() {
