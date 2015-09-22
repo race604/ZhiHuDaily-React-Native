@@ -25,7 +25,8 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .setApplication(getApplication())
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
-                .addPackage(new MainReactPackage())
+                //.addPackage(new MainReactPackage())
+                .addPackage(new MyReactPackage())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
@@ -75,4 +76,6 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
             mReactInstanceManager.onResume(this);
         }
     }
+
+
 }
