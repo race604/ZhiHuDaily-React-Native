@@ -13,6 +13,8 @@ var {
   View,
 } = React;
 
+var ToolbarAndroid = require('ToolbarAndroid');
+
 var TimerMixin = require('react-timer-mixin');
 
 var WelcomeScreen = require('./WelcomeScreen');
@@ -33,6 +35,8 @@ var RCTZhiHuDaily = React.createClass({
       splashed: false,
     };
   },
+  onActionSelected: function(position) {
+  },
   render: function() {
     if (!this.state.splashed) {
       return (
@@ -40,18 +44,32 @@ var RCTZhiHuDaily = React.createClass({
       );
     } else {
       return (
-        <ListScreen />
+        <View style={styles.container}>
+          <ToolbarAndroid
+            navIcon={require('image!ic_menu_white')}
+            title="知乎日报"
+            titleColor="white"
+            style={styles.toolbar}
+            actions={toolbarActions}
+            onActionSelected={this.onActionSelected} />
+          <ListScreen />
+        </View>
+
       );
     }
   }
 });
 
+var toolbarActions = [
+  {title: '提醒', icon: require('image!ic_message_white'), show: 'always'},
+  {title: '夜间模式', show: 'never'},
+  {title: '设置选项', show: 'never'},
+];
+
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    flexDirection: 'column',
   },
   welcome: {
     fontSize: 20,
@@ -62,6 +80,10 @@ var styles = StyleSheet.create({
     textAlign: 'center',
     color: '#333333',
     marginBottom: 5,
+  },
+  toolbar: {
+    backgroundColor: '#00a2ed',
+    height: 56,
   },
 });
 
