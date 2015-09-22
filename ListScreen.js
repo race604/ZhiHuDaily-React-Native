@@ -3,6 +3,7 @@
 var React = require('react-native');
 var {
   AsyncStorage,
+  Platform,
   ListView,
   Image,
   StyleSheet,
@@ -113,6 +114,19 @@ var ListScreen = React.createClass({
     );
   },
   selectStory: function(story: Object) {
+    if (Platform.OS === 'ios') {
+      this.props.navigator.push({
+        title: story.title,
+        component: StoryScreen,
+        passProps: {story},
+      });
+    } else {
+      this.props.navigator.push({
+        title: story.title,
+        name: 'story',
+        story: story,
+      });
+    }
   },
   renderRow: function(
     story: Object,

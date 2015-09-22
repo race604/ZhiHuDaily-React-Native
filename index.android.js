@@ -8,9 +8,12 @@ var React = require('react-native');
 
 var {
   AppRegistry,
-  StyleSheet,
+  BackAndroid,
   Text,
   View,
+  Navigator,
+  StyleSheet,
+  ToolbarAndroid,
 } = React;
 
 var ToolbarAndroid = require('ToolbarAndroid');
@@ -19,17 +22,61 @@ var TimerMixin = require('react-timer-mixin');
 
 var WelcomeScreen = require('./WelcomeScreen');
 var ListScreen = require('./ListScreen');
+var StoryScreen = require('./StoryScreen');
+
+var _navigator;
+BackAndroid.addEventListener('hardwareBackPress', function() {
+  if (_navigator && _navigator.getCurrentRoutes().length > 1) {
+    _navigator.pop();
+    return true;
+  }
+  return false;
+});
+
+var RouteMapper = function(route, navigationOperations, onComponentRef) {
+  _navigator = navigationOperations;
+  if (route.name === 'home') {
+    return (
+      <View style={styles.container}>
+        <ToolbarAndroid
+          navIcon={require('image!ic_menu_white')}
+          title="知乎日报"
+          titleColor="white"
+          style={styles.toolbar}
+          actions={toolbarActions}
+          onActionSelected={this.onActionSelected} />
+        <ListScreen navigator={navigationOperations}/>
+      </View>
+    );
+  } else if (route.name === 'story') {
+    return (
+      <View style={styles.container}>
+        <ToolbarAndroid
+          navIcon={require('image!ic_back_white')}
+          onIconClicked={navigationOperations.pop}
+          title={route.story.title}
+          titleColor="white"
+          style={styles.toolbar}
+          actions={[]}/>
+        <StoryScreen
+          style={{flex: 1}}
+          navigator={navigationOperations}
+          story={route.story} />
+      </View>
+    );
+  }
+};
 
 var RCTZhiHuDaily = React.createClass({
-  mixins: [TimerMixin],
-  componentDidMount: function() {
-    this.setTimeout(
-      () => {
-        this.setState({splashed: true});
-      },
-      50
-    );
-  },
+  // mixins: [TimerMixin],
+  // componentDidMount: function() {
+  //   this.setTimeout(
+  //     () => {
+  //       this.setState({splashed: true});
+  //     },
+  //     50
+  //   );
+  // },
   getInitialState: function() {
     return {
       splashed: false,
@@ -38,25 +85,34 @@ var RCTZhiHuDaily = React.createClass({
   onActionSelected: function(position) {
   },
   render: function() {
-    if (!this.state.splashed) {
-      return (
-        <WelcomeScreen />
-      );
-    } else {
-      return (
-        <View style={styles.container}>
-          <ToolbarAndroid
-            navIcon={require('image!ic_menu_white')}
-            title="知乎日报"
-            titleColor="white"
-            style={styles.toolbar}
-            actions={toolbarActions}
-            onActionSelected={this.onActionSelected} />
-          <ListScreen />
-        </View>
-
-      );
-    }
+    var initialRoute = {name: 'home'};
+    return (
+      <Navigator
+        style={styles.container}
+        initialRoute={initialRoute}
+        configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
+        renderScene={RouteMapper}
+      />
+    );
+    // if (!this.state.splashed) {
+    //   return (
+    //     <WelcomeScreen />
+    //   );
+    // } else {
+    //   return (
+    //     <View style={styles.container}>
+    //       <ToolbarAndroid
+    //         navIcon={require('image!ic_menu_white')}
+    //         title="知乎日报"
+    //         titleColor="white"
+    //         style={styles.toolbar}
+    //         actions={toolbarActions}
+    //         onActionSelected={this.onActionSelected} />
+    //       <ListScreen />
+    //     </View>
+    //
+    //   );
+    // }
   }
 });
 
