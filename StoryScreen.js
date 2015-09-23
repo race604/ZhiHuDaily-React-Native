@@ -8,11 +8,14 @@ var {
   Text,
   View,
   Image,
+  ToolbarAndroid,
+  TouchableHighlight,
 } = React;
 
 var precomputeStyle = require('precomputeStyle');
 
 var MyWebView = require('./WebView');
+var DetailToolbar = require('./DetailToolbar');
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
 var REF_HEADER = 'header';
@@ -58,13 +61,15 @@ var StoryScreen = React.createClass({
     this.refs[REF_HEADER].setNativeProps(nativeProps);
   },
   render: function() {
-    var url = BASE_URL + this.props.story.id;
+    var toolbar = <DetailToolbar navigator={this.props.navigator} style={styles.toolbar}
+      story={this.props.story}/>;
     if (this.state.isLoading) {
       return (
         <View style={[styles.container, styles.center]}>
           <Text>
             正在加载...
           </Text>
+          {toolbar}
         </View>
       );
     } else {
@@ -74,6 +79,7 @@ var StoryScreen = React.createClass({
         //   flexDirection: 'row',
         //   transform: [{translateY: this.state.scrollY}],
         // };
+        var toolbar
         return (
           <View style={styles.container}>
             <MyWebView
@@ -91,6 +97,7 @@ var StoryScreen = React.createClass({
                 </Text>
               </View>
             </Image>
+            {toolbar}
           </View>
         );
       } else {
@@ -99,6 +106,7 @@ var StoryScreen = React.createClass({
             <Text>
               加载失败
             </Text>
+            {toolbar}
           </View>
         );
       }
@@ -108,10 +116,24 @@ var StoryScreen = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  toolbar: {
+    backgroundColor: '#00a2ed',
+    height: 56,
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 0,
+  },
   headerImage: {
     height: 200,
     flexDirection: 'row',
     backgroundColor: '#DDDDDD',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    top: 56,
   },
   titleContainer: {
     flex: 1,
@@ -139,7 +161,7 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    top:0,
+    top:56,
   },
 });
 

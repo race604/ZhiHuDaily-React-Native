@@ -154,9 +154,6 @@ var ListScreen = React.createClass({
   render: function() {
     var content = this.state.dataSource.getRowCount() === 0 ?
       <View style={styles.container}>
-        <Text>
-          This is the list Screen.
-        </Text>
       </View> :
       <ListView
         ref="listview"

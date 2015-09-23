@@ -51,12 +51,6 @@ var RouteMapper = function(route, navigationOperations, onComponentRef) {
   } else if (route.name === 'story') {
     return (
       <View style={styles.container}>
-        <ToolbarAndroid
-          navIcon={require('image!ic_back_white')}
-          onIconClicked={navigationOperations.pop}
-          titleColor="white"
-          style={styles.toolbar}
-          actions={[]}/>
         <StoryScreen
           style={{flex: 1}}
           navigator={navigationOperations}
