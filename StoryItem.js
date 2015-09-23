@@ -20,7 +20,7 @@ var StoryItem = React.createClass({
       TouchableElement = TouchableNativeFeedback;
     }
     return (
-      <View>
+      <View {...this.props}>
         <TouchableElement
           onPress={this.props.onSelect}
           onShowUnderlay={this.props.onHighlight}
@@ -33,10 +33,9 @@ var StoryItem = React.createClass({
                 {this.props.story.title}
             </Text>
             <Image
-              source={{uri: (this.props.story.images && this.props.story.images[0])
-                ? this.props.story.images[0] : null}}
-              style={styles.cellImage}
-            />
+              source={{uri: ((this.props.story.images && this.props.story.images[0])
+                ? this.props.story.images[0] : '')}}
+              style={styles.cellImage} />
           </View>
         </TouchableElement>
       </View>

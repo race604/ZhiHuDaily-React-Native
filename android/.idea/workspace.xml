@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="AndroidLogFilters">
+    <option name="TOOL_WINDOW_CUSTOM_FILTER" value="ReactNativeJS" />
     <option name="TOOL_WINDOW_CONFIGURED_FILTER" value="Show only selected application" />
   </component>
   <component name="ChangeListManager">
@@ -37,8 +38,8 @@
       <file leaf-file-name="ObservableWebView.java" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/app/src/main/java/com/rctzhihudaily/ObservableWebView.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state vertical-scroll-proportion="1.010142">
-              <caret line="46" column="29" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="29" />
+            <state vertical-scroll-proportion="0.05679513">
+              <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
               <folding>
                 <element signature="imports" expanded="true" />
                 <element signature="e#521#522#0" expanded="true" />
@@ -2079,8 +2080,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/app/src/main/java/com/rctzhihudaily/ObservableWebView.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state vertical-scroll-proportion="1.010142">
-          <caret line="46" column="29" selection-start-line="46" selection-start-column="22" selection-end-line="46" selection-end-column="29" />
+        <state vertical-scroll-proportion="0.05679513">
+          <caret line="25" column="0" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
           <folding>
             <element signature="imports" expanded="true" />
             <element signature="e#521#522#0" expanded="true" />

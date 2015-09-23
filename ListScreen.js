@@ -4,23 +4,42 @@ var React = require('react-native');
 var {
   AsyncStorage,
   Platform,
+  Dimensions,
   ListView,
   Image,
   StyleSheet,
   Text,
   View,
+  DrawerLayoutAndroid,
+  ToolbarAndroid,
+  ToastAndroid,
+  BackAndroid,
 } = React
 
 var TimerMixin = require('react-timer-mixin');
 var StoryItem = require('./StoryItem');
+var ThemesList = require('./ThemesList');
 
 var API_LATEST_URL = 'http://news.at.zhihu.com/api/4/news/latest';
 var API_HISTORY_URL = 'http://news.at.zhihu.com/api/4/news/before/';
+var API_THEME_URL = 'http://news-at.zhihu.com/api/4/theme/';
 var LOADING = {};
-var lastDate = null;
-var latestDate = null;
-var dataBlob = {};
+// var lastDate = null;
+// var latestDate = null;
+// var dataBlob = {};
 var WEEKDAY = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
+var DRAWER_WIDTH_LEFT = 56;
+var toolbarActions = [
+  {title: '提醒', icon: require('image!ic_message_white'), show: 'always'},
+  {title: '夜间模式', show: 'never'},
+  {title: '设置选项', show: 'never'},
+];
+
+var dataCache = {
+  dataForTheme: {},
+  sectionsForTheme: {},
+  lastID: {},
+};
 
 function parseDateFromYYYYMMdd(str) {
   if (!str) return new Date();
@@ -45,53 +64,113 @@ var ListScreen = React.createClass({
     return {
       isLoading: false,
       isLoadingTail: false,
+      theme: null,
       dataSource: dataSource,
     };
   },
-  componentDidMount: function() {
-    this.fetchStories(lastDate);
+  componentWillMount: function() {
+    BackAndroid.addEventListener('hardwareBackPress', this._handleBackButtonPress);
   },
-  fetchStories: function(dateBefore) {
-    var isRefresh = !dateBefore
-    var reqUrl = isRefresh ? API_LATEST_URL : API_HISTORY_URL + dateBefore.yyyymmdd();
+  _handleBackButtonPress: function() {
+    if (this.state.theme) {
+      this.onSelectTheme(null);
+      return true;
+    }
+    return false;
+  },
+  componentDidMount: function() {
+    this.fetchStories(this.state.theme, true);
+  },
+  fetchStories: function(theme, isRefresh) {
+    var themeId = theme ? theme.id : 0;
+    var lastID = dataCache.lastID[themeId];
+    if (!lastID && !isRefresh) {
+      isRefresh = true;
+    }
+
+    var reqUrl = null;
+    var isInTheme = themeId !== 0
+    if (!isInTheme) {
+      reqUrl = isRefresh ? API_LATEST_URL : (API_HISTORY_URL + lastID);
+    } else {
+      reqUrl = API_THEME_URL + themeId;
+      if (!isRefresh) {
+        reqUrl += '/before/' + lastID;
+      }
+    }
+    var dataBlob = dataCache.dataForTheme[themeId];
+    if (!dataBlob) {
+      dataBlob = isInTheme ? [] : {};
+    }
+    var sectionIDs = dataCache.sectionsForTheme[themeId];
+
     console.log('request url: ' + reqUrl);
     this.setState({
       isLoading: isRefresh,
       isLoadingTail: !isRefresh,
+      theme: this.state.theme,
       dataSource: this.state.dataSource,
     });
     fetch(reqUrl)
       .then((response) => response.json())
       .catch((error) => {
-        LOADING[API_LATEST_URL] = false;
+        LOADING[themeId] = false;
         this.setState({
           isLoading: (isRefresh ? false : this.state.isLoading),
           isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
-          dataSource: this.state.dataSource,
+          theme: this.state.theme,
+          dataSource: this.state.dataSource.cloneWithRowsAndSections(dataBlob, sectionIDs, null),
         });
       })
       .then((responseData) => {
-        lastDate = parseDateFromYYYYMMdd(responseData.date);
-        if (isRefresh) {
-          latestDate = lastDate;
+        var newLastID;
+        var dataSouce;
+        if (!isInTheme) {
+          newLastID = responseData.date;
+          var newDataBlob = {};
+          var newSectionIDs = sectionIDs ? sectionIDs.slice() : []
+          if (newSectionIDs.indexOf(newLastID) < 0) {
+            newSectionIDs.push(newLastID);
+            newSectionIDs.sort((a, b) => (b - a));
+          }
+
+          for (var i = 0; i < newSectionIDs.length; i++) {
+            newDataBlob[newSectionIDs[i]] = dataBlob[newSectionIDs[i]];
+          }
+          newDataBlob[newLastID] = responseData.stories;
+
+          dataCache.sectionsForTheme[themeId] = newSectionIDs;
+
+          dataBlob = newDataBlob;
+          sectionIDs = newSectionIDs;
+          dataSouce = this.state.dataSource.cloneWithRowsAndSections(newDataBlob, newSectionIDs, null);
+        } else {
+          var length = responseData.stories.length;
+          if (length > 0) {
+            newLastID = responseData.stories[length - 1].id;
+          }
+          var newDataBlob;
+
+          if (isRefresh) {
+            newDataBlob = responseData.stories;
+          } else {
+            newDataBlob = dataBlob.concat(responseData.stories);
+          }
+          dataBlob = newDataBlob;
+          dataSouce = this.state.dataSource.cloneWithRows(newDataBlob);
         }
+        dataCache.lastID[themeId] = newLastID;
+        dataCache.dataForTheme[themeId] = dataBlob;
 
-        console.log('lastDate: ' + lastDate);
-        console.log('latestDate: ' + latestDate);
-        var sectionIDs = [];
-        var date = new Date(latestDate);
-        while(date >= lastDate) {
-          sectionIDs.push(date.yyyymmdd());
-          date.setDate(date.getDate() - 1);
-          console.log('add: ' + date);
-        }
+        console.log('lastID: ' + lastID);
+        console.log('newLastID: ' + newLastID);
 
-        dataBlob[lastDate.yyyymmdd()] = responseData.stories;
-
+        LOADING[themeId] = false;
         this.setState({
           isLoading: (isRefresh ? false : this.state.isLoading),
           isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
-          dataSource: this.state.dataSource.cloneWithRowsAndSections(dataBlob, sectionIDs, null),
+          theme: this.state.theme,
+          dataSource: dataSouce,
         });
       })
       .done();
@@ -107,11 +186,17 @@ var ListScreen = React.createClass({
   },
   renderSectionHeader: function(sectionData: Object,
     sectionID: number | string) {
-    return (
-      <Text style={styles.sectionHeader}>
-        {this.getSectionTitle(sectionID)}
-      </Text>
-    );
+    if (this.state.theme) {
+      return (
+        <View></View>
+      );
+    } else {
+      return (
+        <Text style={styles.sectionHeader}>
+          {this.getSectionTitle(sectionID)}
+        </Text>
+      );
+    }
   },
   selectStory: function(story: Object) {
     if (Platform.OS === 'ios') {
@@ -149,12 +234,29 @@ var ListScreen = React.createClass({
     if (this.state.isLoadingTail) {
       return;
     }
-    this.fetchStories(lastDate);
+    this.fetchStories(this.state.theme, false);
+  },
+  onSelectTheme: function(theme) {
+    // ToastAndroid.show('选择' + theme.name, ToastAndroid.SHORT);
+    this.drawer.closeDrawer();
+    this.setState({
+      isLoading: this.state.isLoading,
+      isLoadingTail: this.state.isLoadingTail,
+      theme: theme,
+      dataSource: this.state.dataSource,
+    });
+    this.fetchStories(theme, true);
+  },
+  _renderNavigationView: function() {
+    return (
+      <ThemesList
+        onSelectItem={this.onSelectTheme}
+      />
+    );
   },
   render: function() {
     var content = this.state.dataSource.getRowCount() === 0 ?
-      <View style={styles.container}>
-      </View> :
+      <View style={styles.container}></View> :
       <ListView
         ref="listview"
         dataSource={this.state.dataSource}
@@ -166,11 +268,27 @@ var ListScreen = React.createClass({
         keyboardShouldPersistTaps={true}
         showsVerticalScrollIndicator={false}
       />;
+    var title = this.state.theme ? this.state.theme.name : '首页';
       return (
-        <View style={styles.container}>
-          <View style={styles.separator} />
-          {content}
-        </View>
+        <DrawerLayoutAndroid
+          ref={(drawer) => { this.drawer = drawer; }}
+          drawerWidth={Dimensions.get('window').width - DRAWER_WIDTH_LEFT}
+          keyboardDismissMode="on-drag"
+          drawerPosition={DrawerLayoutAndroid.positions.Left}
+          renderNavigationView={this._renderNavigationView}>
+          <View style={styles.container}>
+            <ToolbarAndroid
+              navIcon={require('image!ic_menu_white')}
+              title={title}
+              titleColor="white"
+              style={styles.toolbar}
+              actions={toolbarActions}
+              onIconClicked={() => this.drawer.openDrawer()}
+              onActionSelected={this.onActionSelected} />
+            {content}
+          </View>
+        </DrawerLayoutAndroid>
+
       );
   }
 });
@@ -178,7 +296,12 @@ var ListScreen = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
+    flexDirection: 'column',
     backgroundColor: '#FAFAFA',
+  },
+  toolbar: {
+    backgroundColor: '#00a2ed',
+    height: 56,
   },
   rator: {
     height: 1,
