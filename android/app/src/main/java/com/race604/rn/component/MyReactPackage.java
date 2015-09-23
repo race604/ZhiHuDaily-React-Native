@@ -1,4 +1,4 @@
-package com.rctzhihudaily;
+package com.race604.rn.component;
 
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.shell.MainReactPackage;

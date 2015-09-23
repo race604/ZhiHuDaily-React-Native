@@ -1,4 +1,4 @@
-package com.rctzhihudaily;
+package com.race604.rn.component;
 
 import android.annotation.TargetApi;
 import android.content.Context;

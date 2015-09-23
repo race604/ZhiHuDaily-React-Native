@@ -1,4 +1,4 @@
-package com.rctzhihudaily;
+package com.race604.rn.component;
 
 import com.facebook.react.uimanager.CatalystStylesDiffMap;
 import com.facebook.react.uimanager.SimpleViewManager;
