@@ -3,12 +3,14 @@
 var React = require('react-native');
 var {
   AppRegistry,
+  Platform,
   PixelRatio,
   StyleSheet,
   Text,
   View,
   Image,
-  TouchableWithoutFeedback,
+  TouchableNativeFeedback,
+  TouchableHighlight,
   ToastAndroid,
 } = React;
 
@@ -66,34 +68,40 @@ var DetailToolbar = React.createClass({
     ToastAndroid.show('赞', ToastAndroid.SHORT);
   },
   render: function() {
+    var TouchableElement = TouchableHighlight;
+    if (Platform.OS === 'android') {
+      TouchableElement = TouchableNativeFeedback;
+    }
     return(
       <View {...this.props}>
         <View style={styles.actionsContainer}>
-          <TouchableWithoutFeedback onPress={this._onPressBackButton}
-            style={styles.actionItem}>
-            <Image
-              style={styles.backIcon}
-              source={require('image!ic_back_white')}
-              resizeMode='contain' />
-          </TouchableWithoutFeedback>
+          <TouchableElement onPress={this._onPressBackButton}>
+            <View style={styles.actionItem}>
+              <Image
+                style={styles.backIcon}
+                source={require('image!ic_back_white')}
+                resizeMode='contain' />
+            </View>
+          </TouchableElement>
           <View style={{flex: 1}} />
-          <TouchableWithoutFeedback onPress={this._onPressShareButton}
-            style={styles.actionItem}>
-            <Image
-              style={styles.actionIcon}
-              source={require('image!ic_share_white')}
-              resizeMode='contain' />
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this._onPressCollectButton}
-            style={styles.actionItem}>
-            <Image
-              style={styles.actionIcon}
-              source={require('image!ic_collect_white')}
-              resizeMode='contain' />
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this._onPressCommentButton}
-            style={styles.actionItem}>
-            <View style={{flexDirection: 'row', alignItems: 'center'}}>
+          <TouchableElement onPress={this._onPressShareButton}>
+            <View style={styles.actionItem}>
+              <Image
+                style={styles.actionIcon}
+                source={require('image!ic_share_white')}
+                resizeMode='contain' />
+            </View>
+          </TouchableElement>
+          <TouchableElement onPress={this._onPressCollectButton}>
+            <View style={styles.actionItem}>
+              <Image
+                style={styles.actionIcon}
+                source={require('image!ic_collect_white')}
+                resizeMode='contain' />
+            </View>
+          </TouchableElement>
+          <TouchableElement onPress={this._onPressCommentButton}>
+            <View style={styles.actionItem}>
               <Image
                 style={styles.actionIconWithCount}
                 source={require('image!ic_comment_white')}
@@ -102,10 +110,9 @@ var DetailToolbar = React.createClass({
                 {this.state.isLoading ? '...' : this.state.extra.comments}
               </Text>
             </View>
-          </TouchableWithoutFeedback>
-          <TouchableWithoutFeedback onPress={this._onPressPraiseButton}
-            style={styles.actionItem}>
-            <View style={{flexDirection: 'row', alignItems: 'center', marginRight: 16}}>
+          </TouchableElement>
+          <TouchableElement onPress={this._onPressPraiseButton}>
+            <View style={styles.actionItem}>
               <Image
                 style={styles.actionIconWithCount}
                 source={require('image!ic_praise_white')}
@@ -114,7 +121,7 @@ var DetailToolbar = React.createClass({
                 {this.state.isLoading ? '...' : this.state.extra.popularity}
               </Text>
             </View>
-          </TouchableWithoutFeedback>
+          </TouchableElement>
         </View>
 
       </View>
@@ -138,19 +145,20 @@ var styles = StyleSheet.create({
   backIcon: {
     width: 32,
     height: 32,
-    marginLeft: 16,
-    marginRight: 16,
+    marginLeft: 8,
+    marginRight: 8,
   },
   actionItem: {
     height: 56,
+    flexDirection: 'row',
     alignItems: 'center',
-
+    justifyContent: 'center',
+    paddingLeft: 8,
+    paddingRight: 8,
   },
   actionIcon: {
     width: 32,
     height: 32,
-    marginLeft: 5,
-    marginRight: 5,
   },
   actionIconWithCount: {
     width: 32,
