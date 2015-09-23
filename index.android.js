@@ -9,11 +9,14 @@ var React = require('react-native');
 var {
   AppRegistry,
   BackAndroid,
+  Dimensions,
   Text,
   View,
   Navigator,
   StyleSheet,
   ToolbarAndroid,
+  DrawerLayoutAndroid,
+  ToastAndroid,
 } = React;
 
 var ToolbarAndroid = require('ToolbarAndroid');
@@ -23,6 +26,8 @@ var TimerMixin = require('react-timer-mixin');
 var WelcomeScreen = require('./WelcomeScreen');
 var ListScreen = require('./ListScreen');
 var StoryScreen = require('./StoryScreen');
+var ThemesList = require('./ThemesList');
+var DRAWER_WIDTH_LEFT = 56;
 
 var _navigator;
 BackAndroid.addEventListener('hardwareBackPress', function() {
@@ -32,33 +37,6 @@ BackAndroid.addEventListener('hardwareBackPress', function() {
   }
   return false;
 });
-
-var RouteMapper = function(route, navigationOperations, onComponentRef) {
-  _navigator = navigationOperations;
-  if (route.name === 'home') {
-    return (
-      <View style={styles.container}>
-        <ToolbarAndroid
-          navIcon={require('image!ic_menu_white')}
-          title="知乎日报"
-          titleColor="white"
-          style={styles.toolbar}
-          actions={toolbarActions}
-          onActionSelected={this.onActionSelected} />
-        <ListScreen navigator={navigationOperations}/>
-      </View>
-    );
-  } else if (route.name === 'story') {
-    return (
-      <View style={styles.container}>
-        <StoryScreen
-          style={{flex: 1}}
-          navigator={navigationOperations}
-          story={route.story} />
-      </View>
-    );
-  }
-};
 
 var RCTZhiHuDaily = React.createClass({
   // mixins: [TimerMixin],
@@ -70,6 +48,33 @@ var RCTZhiHuDaily = React.createClass({
   //     50
   //   );
   // },
+  RouteMapper: function(route, navigationOperations, onComponentRef) {
+    _navigator = navigationOperations;
+    if (route.name === 'home') {
+      return (
+        <View style={styles.container}>
+          <ToolbarAndroid
+            navIcon={require('image!ic_menu_white')}
+            title="知乎日报"
+            titleColor="white"
+            style={styles.toolbar}
+            actions={toolbarActions}
+            onIconClicked={() => this.drawer.openDrawer()}
+            onActionSelected={this.onActionSelected} />
+          <ListScreen navigator={navigationOperations}/>
+        </View>
+      );
+    } else if (route.name === 'story') {
+      return (
+        <View style={styles.container}>
+          <StoryScreen
+            style={{flex: 1}}
+            navigator={navigationOperations}
+            story={route.story} />
+        </View>
+      );
+    }
+  },
   getInitialState: function() {
     return {
       splashed: false,
@@ -77,15 +82,33 @@ var RCTZhiHuDaily = React.createClass({
   },
   onActionSelected: function(position) {
   },
+  onSelectTheme: function(theme) {
+    ToastAndroid.show('选择' + theme.name, ToastAndroid.SHORT);
+  },
+  _renderNavigationView: function() {
+    return (
+      <ThemesList
+        onSelectItem={this.onSelectTheme}
+      />
+    );
+  },
   render: function() {
     var initialRoute = {name: 'home'};
+    var navigationView = ThemesList;
     return (
-      <Navigator
-        style={styles.container}
-        initialRoute={initialRoute}
-        configureScene={() => Navigator.SceneConfigs.HorizontalSwipeJump}
-        renderScene={RouteMapper}
-      />
+      <DrawerLayoutAndroid
+        ref={(drawer) => { this.drawer = drawer; }}
+        drawerWidth={Dimensions.get('window').width - DRAWER_WIDTH_LEFT}
+        keyboardDismissMode="on-drag"
+        drawerPosition={DrawerLayoutAndroid.positions.Left}
+        renderNavigationView={this._renderNavigationView}>
+        <Navigator
+          style={styles.container}
+          initialRoute={initialRoute}
+          configureScene={() => Navigator.SceneConfigs.FadeAndroid}
+          renderScene={this.RouteMapper}
+        />
+      </DrawerLayoutAndroid>
     );
     // if (!this.state.splashed) {
     //   return (
