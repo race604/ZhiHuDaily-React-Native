@@ -21,9 +21,9 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-.gradle/*.bin
-.gradle/*.lock
 .idea/
+taskArtifacts/
+local.properties
 
 
 # node.js
