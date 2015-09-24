@@ -36,8 +36,9 @@ In this project, I used most of technology in React Native:
 1. Add local storage to cache data
 2. Add List header banner (Like ViewPager?)
 3. Add splash animation
-4. Working on incomplete features
-5. **iOS compatible**
+4. Add swipe/pull to refresh
+5. Working on incomplete features
+6. **iOS compatible**
 
 ## License
 

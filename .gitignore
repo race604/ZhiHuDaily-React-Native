@@ -23,6 +23,7 @@ DerivedData
 project.xcworkspace
 .gradle/*.bin
 .gradle/*.lock
+.idea/
 
 
 # node.js
