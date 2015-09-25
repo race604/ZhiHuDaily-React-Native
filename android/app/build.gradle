@@ -52,7 +52,12 @@ task downloadJSBundle << {
     if (f.exists()) {
         f.delete()
     }
-    new URL(DOWNLOAD_URL).withInputStream{ i -> f.withOutputStream{ it << i }}
+    try {
+        new URL(DOWNLOAD_URL).withInputStream{ i -> f.withOutputStream{ it << i }}
+    } catch (Exception e) {
+        e.printStackTrace()
+    }
+
 }
 
 preBuild.dependsOn downloadJSBundle
