@@ -2,7 +2,7 @@
 
 The is a [Zhihu Daily](http://daily.zhihu.com/) App client, implemented using [**React Native**](http://facebook.github.io/react-native/) for Android. The is a demo project to show how to develop a compelet app with React Native. (The data api is from [ZhihuDailyPurify](https://github.com/izzyleung/ZhihuDailyPurify/wiki/%E7%9F%A5%E4%B9%8E%E6%97%A5%E6%8A%A5-API-%E5%88%86%E6%9E%90))
 
-## How does it looks like?
+## How does it look like?
 
 * The home page
 
@@ -15,6 +15,14 @@ The is a [Zhihu Daily](http://daily.zhihu.com/) App client, implemented using [*
 * The content page
 
 ![](./art/content.jpg)
+
+## How to run
+
+1. Prepare your environment: [Requirements](http://facebook.github.io/react-native/docs/getting-started.html#requirements) and [Android Setup](http://facebook.github.io/react-native/docs/android-setup.html)
+2. Clone this repo, and goto the project root directory
+3. run `npm install`
+4. run `react-native run-android`
+5. Enjoy
 
 ## Related content
 
