@@ -1,3 +1,5 @@
+[![Android Gems](http://www.android-gems.com/badge/race604/ZhiHuDaily-React-Native.svg?branch=master)](http://www.android-gems.com/lib/race604/ZhiHuDaily-React-Native)
+
 # ZhiHuDaily-React-Native
 
 The is a [Zhihu Daily](http://daily.zhihu.com/) App client, implemented using [**React Native**](http://facebook.github.io/react-native/) for Android. The is a demo project to show how to develop a compelet app with React Native. (The data api is from [ZhihuDailyPurify](https://github.com/izzyleung/ZhihuDailyPurify/wiki/%E7%9F%A5%E4%B9%8E%E6%97%A5%E6%8A%A5-API-%E5%88%86%E6%9E%90))
