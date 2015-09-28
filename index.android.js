@@ -21,7 +21,7 @@ var ToolbarAndroid = require('ToolbarAndroid');
 
 var TimerMixin = require('react-timer-mixin');
 
-var WelcomeScreen = require('./WelcomeScreen');
+var SplashScreen = require('./SplashScreen');
 var ListScreen = require('./ListScreen');
 var StoryScreen = require('./StoryScreen');
 
@@ -40,15 +40,15 @@ var backHandler = {
 }
 
 var RCTZhiHuDaily = React.createClass({
-  // mixins: [TimerMixin],
-  // componentDidMount: function() {
-  //   this.setTimeout(
-  //     () => {
-  //       this.setState({splashed: true});
-  //     },
-  //     50
-  //   );
-  // },
+  mixins: [TimerMixin],
+  componentDidMount: function() {
+    this.setTimeout(
+      () => {
+        this.setState({splashed: true});
+      },
+      2000,
+    );
+  },
   RouteMapper: function(route, navigationOperations, onComponentRef) {
     _navigator = navigationOperations;
     if (route.name === 'home') {
@@ -76,34 +76,21 @@ var RCTZhiHuDaily = React.createClass({
   onActionSelected: function(position) {
   },
   render: function() {
-    var initialRoute = {name: 'home'};
-    return (
-      <Navigator
-        style={styles.container}
-        initialRoute={initialRoute}
-        configureScene={() => Navigator.SceneConfigs.FadeAndroid}
-        renderScene={this.RouteMapper}
-      />
-    );
-    // if (!this.state.splashed) {
-    //   return (
-    //     <WelcomeScreen />
-    //   );
-    // } else {
-    //   return (
-    //     <View style={styles.container}>
-    //       <ToolbarAndroid
-    //         navIcon={require('image!ic_menu_white')}
-    //         title="知乎日报"
-    //         titleColor="white"
-    //         style={styles.toolbar}
-    //         actions={toolbarActions}
-    //         onActionSelected={this.onActionSelected} />
-    //       <ListScreen />
-    //     </View>
-    //
-    //   );
-    // }
+    if (this.state.splashed) {
+      var initialRoute = {name: 'home'};
+      return (
+        <Navigator
+          style={styles.container}
+          initialRoute={initialRoute}
+          configureScene={() => Navigator.SceneConfigs.FadeAndroid}
+          renderScene={this.RouteMapper}
+        />
+      );
+    } else {
+      return (
+        <SplashScreen />
+      );
+    }
   }
 });
 
@@ -111,11 +98,6 @@ var styles = StyleSheet.create({
   container: {
     flex: 1,
     flexDirection: 'column',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
   },
   instructions: {
     textAlign: 'center',
