@@ -1,4 +1,4 @@
-package com.race604.zhihu.daily;
+package com.rctzhihudaily;
 
 import android.app.Activity;
 import android.os.Bundle;
