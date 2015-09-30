@@ -160,6 +160,15 @@ var ListScreen = React.createClass({
           dataSource: dataSouce,
         });
       })
+      .catch((error) => {
+        console.error(error);
+        this.setState({
+          isLoading: (isRefresh ? false : this.state.isLoading),
+          isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
+          theme: this.state.theme,
+          dataSource: this.state.dataSource.cloneWithRows([]),
+        });
+      })
       .done();
   },
   getSectionTitle: function(str) {
@@ -243,7 +252,7 @@ var ListScreen = React.createClass({
   },
   render: function() {
     var content = this.state.dataSource.getRowCount() === 0 ?
-      <View style={styles.container}></View> :
+      <View style={styles.centerEmpty}><Text>加载失败</Text></View> :
       <ListView
         ref="listview"
         dataSource={this.state.dataSource}
@@ -281,6 +290,11 @@ var ListScreen = React.createClass({
 });
 
 var styles = StyleSheet.create({
+  centerEmpty: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   container: {
     flex: 1,
     flexDirection: 'column',
