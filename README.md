@@ -39,14 +39,16 @@ In this project, I used most of technology in React Native:
 * ToolbarAndroid/Navigator
 * StyleSheet/ToastAndroid/BackAndroid
 * Timers
+* AsyncStorage
+* Animations
 * ...
 
 ## TODO
 
-1. Add local storage to cache data
+1. ~~Add local storage to cache data~~ (done)
 2. Add List header banner (Like ViewPager?)
 3. Add splash animation
-4. Add swipe/pull to refresh
+4. ~~Add swipe/pull to refresh~~ (done)
 5. Working on incomplete features
 6. **iOS compatible**
 
