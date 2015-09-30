@@ -12,37 +12,24 @@ var {
 
 var Animated = require('Animated');
 
-var REQUEST_URL = "http://news-at.zhihu.com/api/4/start-image/1080*1776";
-
-var COVER_KEY = '@WelcomeScreen:cover';
-
 var WINDOW_WIDTH = Dimensions.get('window').width;
+
+var DataRepository = require('./DataRepository');
+var repository = new DataRepository();
 
 var SplashScreen = React.createClass({
   fetchData: function() {
-    fetch(REQUEST_URL)
-      .then((response) => response.json())
-      .then((responseData) => {
-        //console.log(responseData);
-        try {
-          AsyncStorage.setItem(COVER_KEY, JSON.stringify(responseData));
-        } catch (error) {
-          console.error(error);
+    repository.getCover()
+      .then((result) => {
+        if (result){
+          this.setState({cover: result});
         }
       })
+      .catch((error) => {
+        console.error(error);
+      })
       .done();
-  },
-  async _loadInitialState() {
-    try {
-      var value = await AsyncStorage.getItem(COVER_KEY);
-      var cover = JSON.parse(value);
-      console.log('saved: ' + cover);
-      if (value !== null){
-        this.setState({cover: cover});
-      }
-    } catch (error) {
-      console.error(error);
-    }
+    repository.updateCover();
   },
   getInitialState: function() {
     return {
@@ -52,7 +39,6 @@ var SplashScreen = React.createClass({
   },
   componentDidMount: function() {
     this.fetchData();
-    this._loadInitialState().done();
     this.state.bounceValue.setValue(1);
     Animated.timing(
       this.state.bounceValue,

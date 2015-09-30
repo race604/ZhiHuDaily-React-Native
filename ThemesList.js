@@ -13,7 +13,9 @@ var {
   TouchableHighlight,
 } = React
 
-var API_THEMES = 'http://news-at.zhihu.com/api/4/themes';
+var DataRepository = require('./DataRepository');
+
+var repository = new DataRepository();
 
 var ThemesList = React.createClass({
   getInitialState: function() {
@@ -30,31 +32,17 @@ var ThemesList = React.createClass({
     this.fetchThemes();
   },
   fetchThemes: function() {
-    fetch(API_THEMES)
-      .then((response) => response.json())
+    repository.getThemes()
+      .then((themes) => {
+        this.setState({
+          isLoading: false,
+          dataSource: this.state.dataSource.cloneWithRows(themes),
+        });
+      })
       .catch((error) => {
         this.setState({
           isLoading: false,
           dataSource: this.state.dataSource,
-        });
-      })
-      .then((responseData) => {
-        var themes = [];
-        if (responseData.subscribed) {
-          var len = responseData.subscribed.length;
-          var theme
-          for (var i = 0; i < len.length; i++) {
-            theme = responseData.subscribed[i];
-            theme.subscribed = true;
-            themes.push(theme);
-          }
-        }
-        if (responseData.others) {
-          themes = themes.concat(responseData.others);
-        }
-        this.setState({
-          isLoading: false,
-          dataSource: this.state.dataSource.cloneWithRows(themes),
         });
       })
       .done();

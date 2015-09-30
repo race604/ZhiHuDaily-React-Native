@@ -19,6 +19,7 @@ var {
 var TimerMixin = require('react-timer-mixin');
 var StoryItem = require('./StoryItem');
 var ThemesList = require('./ThemesList');
+var DataRepository = require('./DataRepository');
 
 var API_LATEST_URL = 'http://news.at.zhihu.com/api/4/news/latest';
 var API_HISTORY_URL = 'http://news.at.zhihu.com/api/4/news/before/';
@@ -35,6 +36,11 @@ var toolbarActions = [
   {title: '设置选项', show: 'never'},
 ];
 
+var HOME_LIST_KEY = 'home_list_key_';
+var THEME_LIST_KEY = 'theme_list_key_';
+
+var repository = new DataRepository();
+
 var dataCache = {
   dataForTheme: {},
   sectionsForTheme: {},
@@ -47,11 +53,11 @@ function parseDateFromYYYYMMdd(str) {
 }
 
 Date.prototype.yyyymmdd = function() {
-   var yyyy = this.getFullYear().toString();
-   var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-   var dd  = this.getDate().toString();
-   return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
-  };
+  var yyyy = this.getFullYear().toString();
+  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
+  var dd  = this.getDate().toString();
+  return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
+};
 
 var ListScreen = React.createClass({
   mixins: [TimerMixin],
@@ -71,6 +77,9 @@ var ListScreen = React.createClass({
   componentWillMount: function() {
     BackAndroid.addEventListener('hardwareBackPress', this._handleBackButtonPress);
   },
+  componentWillUnmount: function() {
+    repository.saveStories(dataCache.dataForTheme);
+  },
   _handleBackButtonPress: function() {
     if (this.state.theme) {
       this.onSelectTheme(null);
@@ -83,45 +92,23 @@ var ListScreen = React.createClass({
   },
   fetchStories: function(theme, isRefresh) {
     var themeId = theme ? theme.id : 0;
-    var lastID = dataCache.lastID[themeId];
-    if (!lastID && !isRefresh) {
-      isRefresh = true;
-    }
-
-    var reqUrl = null;
     var isInTheme = themeId !== 0
-    if (!isInTheme) {
-      reqUrl = isRefresh ? API_LATEST_URL : (API_HISTORY_URL + lastID);
-    } else {
-      reqUrl = API_THEME_URL + themeId;
-      if (!isRefresh) {
-        reqUrl += '/before/' + lastID;
-      }
-    }
+    var lastID = isRefresh ? null : dataCache.lastID[themeId];
+
     var dataBlob = dataCache.dataForTheme[themeId];
     if (!dataBlob) {
       dataBlob = isInTheme ? [] : {};
     }
     var sectionIDs = dataCache.sectionsForTheme[themeId];
 
-    console.log('request url: ' + reqUrl);
     this.setState({
       isLoading: isRefresh,
       isLoadingTail: !isRefresh,
       theme: this.state.theme,
       dataSource: this.state.dataSource,
     });
-    fetch(reqUrl)
-      .then((response) => response.json())
-      .catch((error) => {
-        LOADING[themeId] = false;
-        this.setState({
-          isLoading: (isRefresh ? false : this.state.isLoading),
-          isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
-          theme: this.state.theme,
-          dataSource: this.state.dataSource.cloneWithRowsAndSections(dataBlob, sectionIDs, null),
-        });
-      })
+
+    repository.fetchThemeStories(themeId, lastID)
       .then((responseData) => {
         var newLastID;
         var dataSouce;
@@ -162,8 +149,8 @@ var ListScreen = React.createClass({
         dataCache.lastID[themeId] = newLastID;
         dataCache.dataForTheme[themeId] = dataBlob;
 
-        console.log('lastID: ' + lastID);
-        console.log('newLastID: ' + newLastID);
+        // console.log('lastID: ' + lastID);
+        // console.log('newLastID: ' + newLastID);
 
         LOADING[themeId] = false;
         this.setState({
