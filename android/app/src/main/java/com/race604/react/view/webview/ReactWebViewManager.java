@@ -1,4 +1,4 @@
-package com.race604.rn.component;
+package com.race604.react.view.webview;
 
 import com.facebook.react.uimanager.CatalystStylesDiffMap;
 import com.facebook.react.uimanager.SimpleViewManager;

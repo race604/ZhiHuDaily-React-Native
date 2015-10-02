@@ -20,6 +20,7 @@ var TimerMixin = require('react-timer-mixin');
 var StoryItem = require('./StoryItem');
 var ThemesList = require('./ThemesList');
 var DataRepository = require('./DataRepository');
+var SwipeRefreshLayoutAndroid = require('./SwipeRereshLayout');
 
 var API_LATEST_URL = 'http://news.at.zhihu.com/api/4/news/latest';
 var API_HISTORY_URL = 'http://news.at.zhihu.com/api/4/news/before/';
@@ -159,6 +160,8 @@ var ListScreen = React.createClass({
           theme: this.state.theme,
           dataSource: dataSouce,
         });
+
+        this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
       })
       .catch((error) => {
         console.error(error);
@@ -168,6 +171,7 @@ var ListScreen = React.createClass({
           theme: this.state.theme,
           dataSource: this.state.dataSource.cloneWithRows([]),
         });
+        this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
       })
       .done();
   },
@@ -250,9 +254,14 @@ var ListScreen = React.createClass({
       />
     );
   },
+  onRefresh: function() {
+    this.onSelectTheme(this.state.theme);
+  },
   render: function() {
     var content = this.state.dataSource.getRowCount() === 0 ?
-      <View style={styles.centerEmpty}><Text>加载失败</Text></View> :
+      <View style={styles.centerEmpty}>
+        <Text>{this.state.isLoading ? '正在加载...' : '加载失败'}</Text>
+      </View> :
       <ListView
         ref="listview"
         dataSource={this.state.dataSource}
@@ -281,7 +290,11 @@ var ListScreen = React.createClass({
               actions={toolbarActions}
               onIconClicked={() => this.drawer.openDrawer()}
               onActionSelected={this.onActionSelected} />
-            {content}
+            <SwipeRefreshLayoutAndroid
+              ref={(swipeRefreshLayout) => { this.swipeRefreshLayout = swipeRefreshLayout; }}
+              onRefresh={this.onRefresh}>
+              {content}
+            </SwipeRefreshLayoutAndroid>
           </View>
         </DrawerLayoutAndroid>
 

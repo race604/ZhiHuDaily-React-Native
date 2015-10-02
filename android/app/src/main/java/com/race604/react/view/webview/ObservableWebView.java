@@ -1,4 +1,4 @@
-package com.race604.rn.component;
+package com.race604.react.view.webview;
 
 import android.annotation.TargetApi;
 import android.content.Context;
