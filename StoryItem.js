@@ -10,10 +10,19 @@ var {
   Text,
   TouchableHighlight,
   TouchableNativeFeedback,
-  View
+  View,
 } = React;
 
+var precomputeStyle = require('precomputeStyle');
+
+var TITLE_REF = 'title';
+
 var StoryItem = React.createClass({
+  updateReadSate: function() {
+    var nativeProps = precomputeStyle({color: '#777777'});
+    this.refs[TITLE_REF].setNativeProps(nativeProps);
+    this.props.onSelect();
+  },
   render: function() {
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
@@ -22,7 +31,7 @@ var StoryItem = React.createClass({
     return (
       <View {...this.props}>
         <TouchableElement
-          onPress={this.props.onSelect}
+          onPress={this.updateReadSate /*this.props.onSelect*/}
           onShowUnderlay={this.props.onHighlight}
           onHideUnderlay={this.props.onUnhighlight}>
           <View style={styles.row}>
@@ -30,7 +39,8 @@ var StoryItem = React.createClass({
               * omit a property or set it to undefined if it's inside a shape,
               * even if it isn't required */}
             <Text
-              style={this.props.story.read ? storyTitleRead : styles.storyTitle}
+              ref={TITLE_REF}
+              style={this.props.story.read ? styles.storyTitleRead : styles.storyTitle}
               numberOfLines={3}>
                 {this.props.story.title}
             </Text>

@@ -99,9 +99,8 @@ DataRepository.prototype.fetchStories = function(date?: Date,
     Promise.all([localStorage, networking])
       .then((values) => {
         var error, result;
-        if (values[0] || values[1]) {
-          result = values[1] ? values[1] : values[0];
-        } else {
+        result = this._mergeReadState(values[0], values[1]);
+        if (!result) {
           error = new Error('Load story error');
         }
         callback && callback(error, result);
@@ -146,9 +145,8 @@ DataRepository.prototype.fetchThemeStories = function(themeId: Number, lastID?: 
     Promise.all([localStorage, networking])
       .then((values) => {
         var error, result;
-        if (values[0] || values[1]) {
-          result = values[1] ? values[1] : values[0];
-        } else {
+        result = this._mergeReadState(values[0], values[1]);
+        if (!result) {
           error = new Error('Load story by theme error');
         }
         callback && callback(error, result);
@@ -223,6 +221,33 @@ DataRepository.prototype.getThemes = function(
       return themes;
     });
 
-}
+};
+
+DataRepository.prototype._mergeReadState = function(src, dst) {
+
+  if (!src) {
+    return dst;
+  }
+
+  if (!dst) {
+    return src;
+  }
+
+  var reads = {};
+  var story;
+  for (var i = src.stories.length - 1; i >= 0 ; i--) {
+    story = src.stories[i];
+    reads[story.id] = story.read;
+  }
+
+  for (var i = dst.stories.length - 1; i >= 0 ; i--) {
+    story = dst.stories[i];
+    if (reads[story.id]) {
+      story.read = true;
+    }
+  }
+
+  return dst;
+};
 
 module.exports = DataRepository;

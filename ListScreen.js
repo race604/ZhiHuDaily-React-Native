@@ -199,6 +199,7 @@ var ListScreen = React.createClass({
     }
   },
   selectStory: function(story: Object) {
+    story.read = true;
     if (Platform.OS === 'ios') {
       this.props.navigator.push({
         title: story.title,
