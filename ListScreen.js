@@ -140,8 +140,7 @@ var ListScreen = React.createClass({
 
           dataBlob = newDataBlob;
           sectionIDs = newSectionIDs;
-          console.log(responseData);
-          if (isRefresh && responseData.topData) {
+          if (responseData.topData) {
             topData = responseData.topData;
             headerDataSource = headerDataSource.cloneWithPages(topData.slice())
           }
@@ -160,11 +159,17 @@ var ListScreen = React.createClass({
           } else {
             newDataBlob = dataBlob.concat(responseData.stories);
           }
+
+          if (responseData.topData) {
+            topData = responseData.topData;
+          }
+
           dataBlob = newDataBlob;
           dataSouce = this.state.dataSource.cloneWithRows(newDataBlob);
         }
         dataCache.lastID[themeId] = newLastID;
         dataCache.dataForTheme[themeId] = dataBlob;
+        dataCache.topDataForTheme[themeId] = topData;
 
         // console.log('lastID: ' + lastID);
         // console.log('newLastID: ' + newLastID);
@@ -210,7 +215,26 @@ var ListScreen = React.createClass({
   },
   _renderHeader: function() {
     if (this.state.theme) {
+      var themeId = this.state.theme ? this.state.theme.id : 0;
+      var topData = dataCache.topDataForTheme[themeId];
+      if (!topData) {
+        return null;
+      }
 
+      var editorsAvator = [];
+      topData.editors.forEach((editor) => {
+        editorsAvator.push(<Image style={styles.editorAvatar} source={{uri: editor.avatar}} />)
+      });
+
+      return (
+        <View style={{flex: 1}}>
+          {this._renderPage({image: topData.background, title: topData.description}, 0)}
+          <View style={styles.editors}>
+            <Text style={styles.editorsLable}>主编:</Text>
+            {editorsAvator}
+          </View>
+        </View>
+      );
     } else {
       return (
         <View style={{flex: 1, height: 200}}>
@@ -399,6 +423,24 @@ var styles = StyleSheet.create({
     fontWeight: '500',
     color: 'white',
     marginBottom: 10,
+  },
+  editors: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 8,
+  },
+  editorsLable: {
+    fontSize: 14,
+    color: '#888888',
+  },
+  editorAvatar: {
+    width: 30,
+    height: 30,
+    borderRadius: 15,
+    borderWidth: 1,
+    borderColor: '#AAAAAA',
+    margin: 4,
   }
 });
 

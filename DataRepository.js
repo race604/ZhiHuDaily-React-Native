@@ -53,6 +53,7 @@ DataRepository.prototype._safeStorage = function(key: string) {
 };
 
 DataRepository.prototype._safeFetch = function(reqUrl: string) {
+  console.log('reqUrl', reqUrl);
   return new Promise((resolve, reject) => {
     fetch(reqUrl)
       .then((response) => response.json())
