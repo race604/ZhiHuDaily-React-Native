@@ -7,7 +7,7 @@ var {
 } = React;
 
 var API_COVER_URL = "http://news-at.zhihu.com/api/4/start-image/1080*1776";
-var API_LATEST_URL = 'http://news.at.zhihu.com/api/4/news/latest';
+var API_LATEST_URL = 'http://news-at.zhihu.com/api/4/news/latest';
 var API_HOME_URL = 'http://news.at.zhihu.com/api/4/news/before/';
 var API_THEME_URL = 'http://news-at.zhihu.com/api/4/theme/';
 var API_THEMES_URL = 'http://news-at.zhihu.com/api/4/themes';
@@ -16,6 +16,7 @@ var KEY_COVER = '@Cover';
 var KEY_THEMES = '@Themes:';
 var KEY_HOME_LIST = '@HomeList:';
 var KEY_THEME_LIST = '@ThemeList:';
+var KEY_THEME_TOPDATA = '@ThemeTop:';
 
 function parseDateFromYYYYMMdd(str) {
   if (!str) return new Date();
@@ -85,18 +86,24 @@ DataRepository.prototype.updateCover = function() {
 DataRepository.prototype.fetchStories = function(date?: Date,
   callback?: ?(error: ?Error, result: ?Object) => void
 ) {
+  var reqUrl;
+  var topData = null;
   if (!date) {
     date = new Date();
-  };
+    reqUrl = API_LATEST_URL;
+    topData = this._safeStorage(KEY_THEME_TOPDATA);
+  } else {
+    var beforeDate = new Date(date);
+    beforeDate.setDate(date.getDate() + 1);
+    reqUrl = API_HOME_URL + beforeDate.yyyymmdd();
+  }
 
   var localStorage = this._safeStorage(KEY_HOME_LIST + date.yyyymmdd());
 
-  var beforeDate = new Date(date);
-  beforeDate.setDate(date.getDate() + 1);
-  var networking = this._safeFetch(API_HOME_URL + beforeDate.yyyymmdd());
+  var networking = this._safeFetch(reqUrl);
 
   var merged = new Promise((resolve, reject) => {
-    Promise.all([localStorage, networking])
+    Promise.all([localStorage, networking, topData])
       .then((values) => {
         var error, result;
         result = this._mergeReadState(values[0], values[1]);
@@ -107,6 +114,11 @@ DataRepository.prototype.fetchStories = function(date?: Date,
         if (error) {
           reject(error);
         } else {
+          if (values[1] && values[1].top_stories) {
+            result.topData = values[1].top_stories;
+          } else {
+            result.topData = values[2];
+          }
           resolve(result);
         }
       });
@@ -114,7 +126,7 @@ DataRepository.prototype.fetchStories = function(date?: Date,
   return merged;
 };
 
-DataRepository.prototype.fetchThemeStories = function(themeId: Number, lastID?: string,
+DataRepository.prototype.fetchThemeStories = function(themeId: number, lastID?: string,
   callback?: ?(error: ?Error, result: ?Object) => void
 ) {
   // Home story list
@@ -123,10 +135,7 @@ DataRepository.prototype.fetchThemeStories = function(themeId: Number, lastID?: 
     if (lastID) {
       date = parseDateFromYYYYMMdd(lastID);
       date.setDate(date.getDate() - 1);
-    } else {
-      date = new Date();
     }
-
     return this.fetchStories(date, callback);
   }
 
@@ -135,14 +144,17 @@ DataRepository.prototype.fetchThemeStories = function(themeId: Number, lastID?: 
   var localStorage = isRefresh ? this._safeStorage(KEY_THEME_LIST + themeId) : null;
 
   var reqUrl = API_THEME_URL + themeId;
+  var topData = null;
   if (lastID) {
     reqUrl += '/before/' + lastID;
+  } else {
+    topData = this._safeStorage(KEY_THEME_TOPDATA + themeId);
   }
 
   var networking = this._safeFetch(reqUrl);
 
   var merged = new Promise((resolve, reject) => {
-    Promise.all([localStorage, networking])
+    Promise.all([localStorage, networking, topData])
       .then((values) => {
         var error, result;
         result = this._mergeReadState(values[0], values[1]);
@@ -153,6 +165,16 @@ DataRepository.prototype.fetchThemeStories = function(themeId: Number, lastID?: 
         if (error) {
           reject(error);
         } else {
+          var topDataRet;
+          if (values[1] && values[1].editors) {
+            topDataRet = {};
+            topDataRet.description = values[1].description;
+            topDataRet.background = values[1].background;
+            topDataRet.editors = values[1].editors;
+          } else {
+            topDataRet = values[2];
+          }
+          result.topData = topDataRet;
           resolve(result);
         }
       });
@@ -161,7 +183,7 @@ DataRepository.prototype.fetchThemeStories = function(themeId: Number, lastID?: 
   return merged;
 };
 
-DataRepository.prototype.saveStories = function(themeList: object,
+DataRepository.prototype.saveStories = function(themeList: object, topData: object,
   callback?: ?(error: ?Error, result: ?Object) => void
 ) {
   var homeList = themeList[0];
@@ -182,6 +204,14 @@ DataRepository.prototype.saveStories = function(themeList: object,
      }
    }
   }
+
+  for (var theme in topData) {
+    if (topData.hasOwnProperty(theme)) {
+      //console.log(theme, topData[key]);
+      keyValuePairs.push([KEY_THEME_TOPDATA + theme, JSON.stringify(topData[theme])]);
+    }
+  }
+
   AsyncStorage.multiSet(keyValuePairs, callback);
 };
 

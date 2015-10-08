@@ -21,6 +21,7 @@ var StoryItem = require('./StoryItem');
 var ThemesList = require('./ThemesList');
 var DataRepository = require('./DataRepository');
 var SwipeRefreshLayoutAndroid = require('./SwipeRereshLayout');
+var ViewPager = require('./ViewPager');
 
 var API_LATEST_URL = 'http://news.at.zhihu.com/api/4/news/latest';
 var API_HISTORY_URL = 'http://news.at.zhihu.com/api/4/news/before/';
@@ -44,6 +45,7 @@ var repository = new DataRepository();
 
 var dataCache = {
   dataForTheme: {},
+  topDataForTheme: {},
   sectionsForTheme: {},
   lastID: {},
 };
@@ -68,18 +70,23 @@ var ListScreen = React.createClass({
       sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
     });
 
+    var headerDataSource = new ViewPager.DataSource({
+      pageHasChanged: (p1, p2) => p1 !== p2,
+    });
+
     return {
       isLoading: false,
       isLoadingTail: false,
       theme: null,
       dataSource: dataSource,
+      headerDataSource: headerDataSource,
     };
   },
   componentWillMount: function() {
     BackAndroid.addEventListener('hardwareBackPress', this._handleBackButtonPress);
   },
   componentWillUnmount: function() {
-    repository.saveStories(dataCache.dataForTheme);
+    repository.saveStories(dataCache.dataForTheme, dataCache.topDataForTheme);
   },
   _handleBackButtonPress: function() {
     if (this.state.theme) {
@@ -101,6 +108,7 @@ var ListScreen = React.createClass({
       dataBlob = isInTheme ? [] : {};
     }
     var sectionIDs = dataCache.sectionsForTheme[themeId];
+    var topData = dataCache.topDataForTheme[themeId];
 
     this.setState({
       isLoading: isRefresh,
@@ -113,6 +121,7 @@ var ListScreen = React.createClass({
       .then((responseData) => {
         var newLastID;
         var dataSouce;
+        var headerDataSource = this.state.headerDataSource;
         if (!isInTheme) {
           newLastID = responseData.date;
           var newDataBlob = {};
@@ -131,7 +140,14 @@ var ListScreen = React.createClass({
 
           dataBlob = newDataBlob;
           sectionIDs = newSectionIDs;
+          console.log(responseData);
+          if (isRefresh && responseData.topData) {
+            topData = responseData.topData;
+            headerDataSource = headerDataSource.cloneWithPages(topData.slice())
+          }
+
           dataSouce = this.state.dataSource.cloneWithRowsAndSections(newDataBlob, newSectionIDs, null);
+
         } else {
           var length = responseData.stories.length;
           if (length > 0) {
@@ -159,6 +175,7 @@ var ListScreen = React.createClass({
           isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
           theme: this.state.theme,
           dataSource: dataSouce,
+          headerDataSource: headerDataSource,
         });
 
         this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
@@ -174,6 +191,36 @@ var ListScreen = React.createClass({
         this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
       })
       .done();
+  },
+  _renderPage: function(
+    story: Object,
+    pageID: number | string,) {
+    return (
+      <Image
+        source={{uri: story.image}}
+        style={styles.headerItem} >
+        <View style={styles.headerTitleContainer}>
+          <Text style={styles.headerTitle}
+            numberOfLines={2}>
+            {story.title}
+          </Text>
+        </View>
+      </Image>
+    )
+  },
+  _renderHeader: function() {
+    if (this.state.theme) {
+
+    } else {
+      return (
+        <View style={{flex: 1, height: 200}}>
+          <ViewPager
+            dataSource={this.state.headerDataSource}
+            style={styles.listHeader}
+            renderPage={this._renderPage}/>
+        </View>
+      );
+    }
   },
   getSectionTitle: function(str) {
     var date = parseDateFromYYYYMMdd(str);
@@ -273,6 +320,7 @@ var ListScreen = React.createClass({
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps={true}
         showsVerticalScrollIndicator={false}
+        renderHeader={this._renderHeader}
       />;
     var title = this.state.theme ? this.state.theme.name : '首页';
       return (
@@ -330,6 +378,27 @@ var styles = StyleSheet.create({
     color: '#888888',
     margin: 10,
     marginLeft: 16,
+  },
+  headerPager: {
+    height: 200,
+  },
+  headerItem: {
+    flex: 1,
+    height: 200,
+    flexDirection: 'row',
+  },
+  headerTitleContainer: {
+    flex: 1,
+    alignSelf: 'flex-end',
+    padding: 10,
+    backgroundColor: 'rgba(0,0,0,0.2)',
+  },
+  headerTitle: {
+    flex: 1,
+    fontSize: 18,
+    fontWeight: '500',
+    color: 'white',
+    marginBottom: 10,
   }
 });
 
