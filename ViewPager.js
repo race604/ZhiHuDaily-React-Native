@@ -93,6 +93,11 @@ var ViewPager = React.createClass({
         this.state.scrollValue.setValue(offsetX);
       },
     });
+
+    if (this.props.isLoop) {
+      this.state.childIndex = 1;
+      this.state.scrollValue.setValue(1);
+    }
   },
 
   componentDidMount() {
@@ -122,7 +127,7 @@ var ViewPager = React.createClass({
   },
 
   goToPage(pageNumber) {
-    console.log('goToPage: ', pageNumber);
+
     var pageCount = this.props.dataSource.getPageCount();
     if (pageNumber < 0 || pageNumber >= pageCount) {
       console.error('Invalid page number: ', pageNumber);
@@ -152,10 +157,18 @@ var ViewPager = React.createClass({
     var scrollStep = (moved ? step : 0) + this.state.childIndex;
 
     this.state.fling = true;
+
+    var nextChildIdx = 0;
+    if (pageNumber > 0 || this.props.isLoop) {
+      nextChildIdx = 1;
+    }
+
     Animated.spring(this.state.scrollValue, {toValue: scrollStep, friction: 10, tension: 50})
       .start((event) => {
         if (event.finished) {
           this.state.fling = false;
+          this.state.childIndex = nextChildIdx;
+          this.state.scrollValue.setValue(nextChildIdx);
           this.setState({
             currentPage: pageNumber,
           });
@@ -194,7 +207,6 @@ var ViewPager = React.createClass({
   },
 
   render() {
-    console.log('render()', this.state.currentPage);
     var dataSource = this.props.dataSource;
     var pageIDs = dataSource.pageIdentities;
 
@@ -231,19 +243,19 @@ var ViewPager = React.createClass({
     }
 
     var sceneContainerStyle = {
-      width: this.state.viewWidth * pagesNum,
+      width: viewWidth * pagesNum,
       flex: 1,
       flexDirection: 'row'
     };
 
-    this.state.childIndex = hasLeft ? 1 : 0;
-    this.state.scrollValue.setValue(this.state.childIndex);
+    // this.state.childIndex = hasLeft ? 1 : 0;
+    // this.state.scrollValue.setValue(this.state.childIndex);
     var translateX = this.state.scrollValue.interpolate({
       inputRange: [0, 1], outputRange: [0, -viewWidth]
     });
 
     return (
-      <View style={{flex: 1, width: deviceWidth, backgroundColor: '#FCF4FF'}}
+      <View style={{flex: 1}}
         onLayout={(event) => {
             // console.log('ViewPager.onLayout()');
             var viewWidth = event.nativeEvent.layout.width;
@@ -266,6 +278,7 @@ var ViewPager = React.createClass({
                             pageCount: pageIDs.length,
                             activePage: this.state.currentPage,
                             scrollValue: this.state.scrollValue,
+                            scrollOffset: this.state.childIndex,
                           })}
       </View>
     );

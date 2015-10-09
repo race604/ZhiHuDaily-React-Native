@@ -92,7 +92,7 @@ DataRepository.prototype.fetchStories = function(date?: Date,
   if (!date) {
     date = new Date();
     reqUrl = API_LATEST_URL;
-    topData = this._safeStorage(KEY_THEME_TOPDATA);
+    topData = this._safeStorage(KEY_THEME_TOPDATA+ '0');
   } else {
     var beforeDate = new Date(date);
     beforeDate.setDate(date.getDate() + 1);

@@ -72,9 +72,11 @@ var DefaultViewPageIndicator = React.createClass({
     var itemWidth = DOT_SIZE + (DOT_SAPCE * 2);
     var offset = (this.state.viewWidth - itemWidth * pageCount) / 2 + itemWidth * this.props.activePage;
 
-    var left = offset; /*this.state.offsetX.interpolate({
-      inputRange: [0, 1], outputRange: [0, offset]
-    });*/
+    //var left = offset;
+    var offsetX = itemWidth * (this.props.activePage - this.props.scrollOffset);
+    var left = this.props.scrollValue.interpolate({
+      inputRange: [0, 1], outputRange: [offsetX, offsetX + itemWidth]
+    })
 
     var indicators = [];
     for (var i = 0; i < pageCount; i++) {
