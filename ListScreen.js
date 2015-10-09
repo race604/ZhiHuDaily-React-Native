@@ -241,7 +241,9 @@ var ListScreen = React.createClass({
           <ViewPager
             dataSource={this.state.headerDataSource}
             style={styles.listHeader}
-            renderPage={this._renderPage}/>
+            renderPage={this._renderPage}
+            isLoop={true}
+            autoPlay={true} />
         </View>
       );
     }

@@ -13,12 +13,14 @@ var {
 } = React;
 
 var StaticRenderer = require('StaticRenderer');
+var TimerMixin = require('react-timer-mixin');
 
 var DefaultViewPageIndicator = require('./DefaultViewPageIndicator');
 var deviceWidth = Dimensions.get('window').width;
 var ViewPagerDataSource = require('./ViewPagerDataSource');
 
 var ViewPager = React.createClass({
+  mixins: [TimerMixin],
 
   statics: {
     DataSource: ViewPagerDataSource,
@@ -30,6 +32,7 @@ var ViewPager = React.createClass({
     renderPage: PropTypes.func.isRequired,
     isLoop: PropTypes.bool,
     locked: PropTypes.bool,
+    autoPlay: PropTypes.bool,
   },
 
   getDefaultProps() {
@@ -63,7 +66,7 @@ var ViewPager = React.createClass({
 
       this.props.hasTouch && this.props.hasTouch(false);
 
-      this._movePage(step);
+      this.movePage(step);
     }
 
     this._panResponder = PanResponder.create({
@@ -92,6 +95,32 @@ var ViewPager = React.createClass({
     });
   },
 
+  componentDidMount() {
+    if (this.props.autoPlay) {
+      this._startAutoPlay();
+    }
+  },
+
+  componentWillReceiveProps(nextProps) {
+    if (nextProps.autoPlay) {
+      this._startAutoPlay();
+    } else {
+      if (this._autoPlayer) {
+        this.clearInterval(this._autoPlayer);
+        this._autoPlayer = null;
+      }
+    }
+  },
+
+  _startAutoPlay() {
+    if (!this._autoPlayer) {
+      this._autoPlayer = this.setInterval(
+        () => {this.movePage(1);},
+        5000
+      );
+    }
+  },
+
   goToPage(pageNumber) {
     console.log('goToPage: ', pageNumber);
     var pageCount = this.props.dataSource.getPageCount();
@@ -101,10 +130,10 @@ var ViewPager = React.createClass({
     }
 
     var step = pageNumber - this.state.currentPage;
-    this._movePage(step);
+    this.movePage(step);
   },
 
-  _movePage(step) {
+  movePage(step) {
     var pageCount = this.props.dataSource.getPageCount();
     var pageNumber = this.state.currentPage + step;
 
