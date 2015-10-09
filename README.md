@@ -8,7 +8,7 @@ The is a [Zhihu Daily](http://daily.zhihu.com/) App client, implemented using [*
 
 * The home page
 
-![](./art/home.jpg)
+![](./art/home1.jpg)
 
 * The drawer
 
@@ -46,11 +46,10 @@ In this project, I used most of technology in React Native:
 ## TODO
 
 1. ~~Add local storage to cache data~~ (done)
-2. Add List header banner (Like ViewPager?)
+2. ~~Add List header banner~~ (done)
 3. ~~Add splash animation~~ (done)
 4. ~~Add swipe/pull to refresh~~ (done)
-5. Working on incomplete features
-6. **iOS compatible**
+5. **iOS compatible**
 
 ## License
 
