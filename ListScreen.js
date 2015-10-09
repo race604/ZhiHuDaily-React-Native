@@ -14,6 +14,7 @@ var {
   ToolbarAndroid,
   ToastAndroid,
   BackAndroid,
+  TouchableOpacity,
 } = React
 
 var TimerMixin = require('react-timer-mixin');
@@ -201,16 +202,18 @@ var ListScreen = React.createClass({
     story: Object,
     pageID: number | string,) {
     return (
-      <Image
-        source={{uri: story.image}}
-        style={styles.headerItem} >
-        <View style={styles.headerTitleContainer}>
-          <Text style={styles.headerTitle}
-            numberOfLines={2}>
-            {story.title}
-          </Text>
-        </View>
-      </Image>
+      <TouchableOpacity style={{flex: 1}} onPress={() => {this.selectStory(story)}}>
+        <Image
+          source={{uri: story.image}}
+          style={styles.headerItem} >
+          <View style={styles.headerTitleContainer}>
+            <Text style={styles.headerTitle}
+              numberOfLines={2}>
+              {story.title}
+            </Text>
+          </View>
+        </Image>
+      </TouchableOpacity>
     )
   },
   _renderHeader: function() {
@@ -420,7 +423,6 @@ var styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.2)',
   },
   headerTitle: {
-    flex: 1,
     fontSize: 18,
     fontWeight: '500',
     color: 'white',
