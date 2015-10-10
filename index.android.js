@@ -34,11 +34,6 @@ BackAndroid.addEventListener('hardwareBackPress', function() {
   return false;
 });
 
-
-var backHandler = {
-  handler: null,
-}
-
 var RCTZhiHuDaily = React.createClass({
   mixins: [TimerMixin],
   componentDidMount: function() {
@@ -46,7 +41,7 @@ var RCTZhiHuDaily = React.createClass({
       () => {
         this.setState({splashed: true});
       },
-      20,
+      2000,
     );
   },
   RouteMapper: function(route, navigationOperations, onComponentRef) {
