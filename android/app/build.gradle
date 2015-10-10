@@ -40,8 +40,8 @@ dependencies {
 }
 
 final def TARGET_BUNDLE_DIR = 'app/src/main/assets/'
-final def TARGET_BUNDLE_FILE = 'ReactNativeDevBundle.js'
-final def DOWNLOAD_URL = 'http://localhost:8081/index.android.bundle?platform=android'
+final def TARGET_BUNDLE_FILE = 'index.android.bundle'
+final def DOWNLOAD_URL = 'http://localhost:8081/index.android.bundle?platform=android&dev=false&minify=true'
 
 task downloadJSBundle << {
     def dir = new File(TARGET_BUNDLE_DIR)

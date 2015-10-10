@@ -41,6 +41,7 @@ In this project, I used most of technology in React Native:
 * Timers
 * AsyncStorage
 * Animations
+* Customize view
 * ...
 
 ## TODO
