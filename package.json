@@ -6,7 +6,8 @@
     "start": "node_modules/react-native/packager/packager.sh"
   },
   "dependencies": {
-    "react-native": "^0.11.0",
+    "react-native": "^0.12.0",
+    "react-native-viewpager": "^0.1.0",
     "react-timer-mixin": "^0.13.3"
   }
 }

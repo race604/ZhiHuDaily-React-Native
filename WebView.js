@@ -6,6 +6,8 @@ var {
   PropTypes
 } = React;
 
+var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
+
 class ObservableWebView extends React.Component {
   constructor() {
     super();
@@ -30,6 +32,11 @@ ObservableWebView.propTypes = {
   css: PropTypes.string,
   onScrollChange: PropTypes.func,
 };
+// 
+// ObservableWebView.viewConfig = {
+//   uiViewClassName: 'RCTWebView',
+//   validAttributes: ReactNativeViewAttributes.RKView
+// };
 
 var RCTWebView = requireNativeComponent('RCTWebView', ObservableWebView, {
   nativeOnly: {onChange: true}

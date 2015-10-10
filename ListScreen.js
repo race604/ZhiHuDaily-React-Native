@@ -22,7 +22,7 @@ var StoryItem = require('./StoryItem');
 var ThemesList = require('./ThemesList');
 var DataRepository = require('./DataRepository');
 var SwipeRefreshLayoutAndroid = require('./SwipeRereshLayout');
-var ViewPager = require('./ViewPager');
+var ViewPager = require('react-native-viewpager');
 
 var API_LATEST_URL = 'http://news.at.zhihu.com/api/4/news/latest';
 var API_HISTORY_URL = 'http://news.at.zhihu.com/api/4/news/before/';
