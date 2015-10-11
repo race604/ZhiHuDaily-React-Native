@@ -12,22 +12,49 @@ var {
   View,
 } = React;
 
+var TimerMixin = require('react-timer-mixin');
+
+var SplashScreen = require('./SplashScreen');
+
 var RCTZhiHuDaily = React.createClass({
-  render: function() {
-    return (
-      <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
-      </View>
+  mixins: [TimerMixin],
+
+  getInitialState: function() {
+    return {
+      splashed: false,
+    };
+  },
+
+  componentDidMount: function() {
+    this.setTimeout(
+      () => {
+        this.setState({splashed: true});
+      },
+      2000,
     );
+  },
+
+  render: function() {
+    if (this.state.splashed) {
+      return (
+        <View style={styles.container}>
+          <Text style={styles.welcome}>
+            Welcome to React Native!
+          </Text>
+          <Text style={styles.instructions}>
+            To get started, edit index.ios.js
+          </Text>
+          <Text style={styles.instructions}>
+            Press Cmd+R to reload,{'\n'}
+            Cmd+D or shake for dev menu
+          </Text>
+        </View>
+      );
+    } else {
+      return (
+        <SplashScreen />
+      );
+    }
   }
 });
 

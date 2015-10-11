@@ -96,6 +96,7 @@ var styles = StyleSheet.create({
     right: 0,
     bottom: 30,
     height: 54,
+    backgroundColor: 'transparent',
   },
   text: {
     flex: 1,
@@ -106,6 +107,7 @@ var styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 10,
+    backgroundColor: 'transparent',
   }
 });
 
