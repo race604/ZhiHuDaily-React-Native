@@ -11,9 +11,11 @@ var {
   ToolbarAndroid,
   TouchableHighlight,
   Animated,
+  Platform,
+  WebView,
 } = React;
 
-var MyWebView = require('./WebView');
+var MyWebView = (Platform.OS === 'ios') ? WebView : require('./WebView');
 var DetailToolbar = require('./DetailToolbar');
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
@@ -61,6 +63,7 @@ var StoryScreen = React.createClass({
     this.state.scrollValue.setValue(scrollY);
   },
   render: function() {
+
     var toolbar = <DetailToolbar navigator={this.props.navigator} style={styles.toolbar}
       story={this.props.story}/>;
     if (this.state.isLoading) {
@@ -77,12 +80,15 @@ var StoryScreen = React.createClass({
         var translateY = this.state.scrollValue.interpolate({
           inputRange: [0, HEADER_SIZE, HEADER_SIZE + 1], outputRange: [0, HEADER_SIZE, HEADER_SIZE]
         });
+        var html = '<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="'
+          + this.state.detail.css[0]
+          + '" /></head><body>' + this.state.detail.body
+          + '</body></html>';
         return (
           <View style={styles.container}>
             <MyWebView
               style={styles.content}
-              html={this.state.detail.body}
-              css={this.state.detail.css[0]}
+              html={html}
               onScrollChange={this.onWebViewScroll}/>
             <Animated.View style={[styles.header, {transform: [{translateY}]}]}>
               <Image

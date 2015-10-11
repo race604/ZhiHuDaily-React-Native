@@ -10,11 +10,17 @@ var {
   StyleSheet,
   Text,
   View,
+  Navigator,
+  NavigatorIOS,
 } = React;
 
 var TimerMixin = require('react-timer-mixin');
 
 var SplashScreen = require('./SplashScreen');
+var MainScreen = require('./MainScreen');
+var StoryScreen = require('./StoryScreen');
+
+var _navigator;
 
 var RCTZhiHuDaily = React.createClass({
   mixins: [TimerMixin],
@@ -34,22 +40,54 @@ var RCTZhiHuDaily = React.createClass({
     );
   },
 
-  render: function() {
-    if (this.state.splashed) {
+  RouteMapper: function(route, navigationOperations, onComponentRef) {
+    _navigator = navigationOperations;
+    // return (
+    //   <View style={styles.container}>
+    //     <MainScreen navigator={navigationOperations}/>
+    //   </View>
+    // );
+    if (route.name === 'home') {
       return (
         <View style={styles.container}>
-          <Text style={styles.welcome}>
-            Welcome to React Native!
-          </Text>
-          <Text style={styles.instructions}>
-            To get started, edit index.ios.js
-          </Text>
-          <Text style={styles.instructions}>
-            Press Cmd+R to reload,{'\n'}
-            Cmd+D or shake for dev menu
-          </Text>
+          <MainScreen navigator={navigationOperations}/>
         </View>
       );
+    } else if (route.name === 'story') {
+      return (
+        <View style={styles.container}>
+          <StoryScreen
+            style={{flex: 1}}
+            navigator={navigationOperations}
+            story={route.story} />
+        </View>
+      );
+    }
+  },
+
+  render: function() {
+    if (this.state.splashed) {
+      var initialRoute = {name: 'home'};
+      return (
+        // <NavigatorIOS
+        //   style={styles.container}
+        //   initialRoute={{
+        //     title: '首页',
+        //     component: MainScreen,
+        //   }}
+        // />
+        <Navigator
+          style={styles.container}
+          initialRoute={initialRoute}
+          configureScene={() => Navigator.SceneConfigs.FadeAndroid}
+          renderScene={this.RouteMapper}
+        />
+      );
+      // return (
+      //   <View style={styles.container}>
+      //     <MainScreen />
+      //   </View>
+      // );
     } else {
       return (
         <SplashScreen />
@@ -61,19 +99,6 @@ var RCTZhiHuDaily = React.createClass({
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
   },
 });
 
