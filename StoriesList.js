@@ -64,7 +64,6 @@ var StoriesList = React.createClass({
     return {
       isLoading: false,
       isLoadingTail: false,
-      theme: null,
       dataSource: dataSource,
       headerDataSource: headerDataSource,
     };
@@ -73,7 +72,10 @@ var StoriesList = React.createClass({
     repository.saveStories(dataCache.dataForTheme, dataCache.topDataForTheme);
   },
   componentDidMount: function() {
-    this.fetchStories(this.state.theme, true);
+    this.fetchStories(this.props.theme, true);
+  },
+  componentWillReceiveProps(nextProps) {
+    this.fetchStories(nextProps.theme, true);
   },
   fetchStories: function(theme, isRefresh) {
     var themeId = theme ? theme.id : 0;
@@ -90,7 +92,6 @@ var StoriesList = React.createClass({
     this.setState({
       isLoading: isRefresh,
       isLoadingTail: !isRefresh,
-      theme: this.state.theme,
       dataSource: this.state.dataSource,
     });
 
@@ -155,22 +156,20 @@ var StoriesList = React.createClass({
         this.setState({
           isLoading: (isRefresh ? false : this.state.isLoading),
           isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
-          theme: this.state.theme,
           dataSource: dataSouce,
           headerDataSource: headerDataSource,
         });
 
-        this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
+        isRefresh && this.props.onRefreshFinish && this.props.onRefreshFinish();
       })
       .catch((error) => {
         console.error(error);
         this.setState({
           isLoading: (isRefresh ? false : this.state.isLoading),
           isLoadingTail: (isRefresh ? this.state.isLoadingTail : false),
-          theme: this.state.theme,
           dataSource: this.state.dataSource.cloneWithRows([]),
         });
-        this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
+        isRefresh && this.props.onRefreshFinish && this.props.onRefreshFinish();
       })
       .done();
   },
@@ -193,17 +192,19 @@ var StoriesList = React.createClass({
     )
   },
   _renderHeader: function() {
-    if (this.state.theme) {
-      var themeId = this.state.theme ? this.state.theme.id : 0;
+    if (this.props.theme) {
+      var themeId = this.props.theme ? this.props.theme.id : 0;
       var topData = dataCache.topDataForTheme[themeId];
       if (!topData) {
         return null;
       }
 
       var editorsAvator = [];
-      topData.editors.forEach((editor) => {
-        editorsAvator.push(<Image style={styles.editorAvatar} source={{uri: editor.avatar}} />)
-      });
+      if (topData.editors) {
+        topData.editors.forEach((editor) => {
+          editorsAvator.push(<Image style={styles.editorAvatar} source={{uri: editor.avatar}} />)
+        });
+      }
 
       return (
         <View style={{flex: 1}}>
@@ -238,7 +239,7 @@ var StoriesList = React.createClass({
   },
   renderSectionHeader: function(sectionData: Object,
     sectionID: number | string) {
-    if (this.state.theme) {
+    if (this.props.theme) {
       return (
         <View></View>
       );
@@ -287,7 +288,7 @@ var StoriesList = React.createClass({
     if (this.state.isLoadingTail) {
       return;
     }
-    this.fetchStories(this.state.theme, false);
+    this.fetchStories(this.props.theme, false);
   },
   setTheme: function(theme) {
     // ToastAndroid.show('选择' + theme.name, ToastAndroid.SHORT);
@@ -301,7 +302,7 @@ var StoriesList = React.createClass({
     this.fetchStories(theme, true);
   },
   onRefresh: function() {
-    this.onSelectTheme(this.state.theme);
+    this.onSelectTheme(this.props.theme);
   },
   render: function() {
     var content = this.state.dataSource.getRowCount() === 0 ?

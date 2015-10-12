@@ -28,6 +28,13 @@ var StoryItem = React.createClass({
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
     }
+    var image = null;
+    if (this.props.story.images && this.props.story.images[0]) {
+      image = <Image
+        source={{uri: this.props.story.images[0]}}
+        style={styles.cellImage} />
+    }
+
     return (
       <View {...this.props}>
         <TouchableElement
@@ -44,10 +51,7 @@ var StoryItem = React.createClass({
               numberOfLines={3}>
                 {this.props.story.title}
             </Text>
-            <Image
-              source={{uri: ((this.props.story.images && this.props.story.images[0])
-                ? this.props.story.images[0] : '')}}
-              style={styles.cellImage} />
+            {image}
           </View>
         </TouchableElement>
       </View>

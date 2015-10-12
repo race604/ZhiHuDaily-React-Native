@@ -22,7 +22,7 @@ var ToolbarAndroid = require('ToolbarAndroid');
 var TimerMixin = require('react-timer-mixin');
 
 var SplashScreen = require('./SplashScreen');
-var ListScreen = require('./ListScreen');
+var MainScreen = require('./MainScreen');
 var StoryScreen = require('./StoryScreen');
 
 var _navigator;
@@ -49,7 +49,7 @@ var RCTZhiHuDaily = React.createClass({
     if (route.name === 'home') {
       return (
         <View style={styles.container}>
-          <ListScreen navigator={navigationOperations}/>
+          <MainScreen navigator={navigationOperations}/>
         </View>
       );
     } else if (route.name === 'story') {

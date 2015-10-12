@@ -16,6 +16,7 @@ var {
 
 var SwitchAndroid = require('SwitchAndroid');
 var ToolbarAndroid = require('ToolbarAndroid');
+var statusBarSize = Platform.OS == 'ios' ? 10 : 0;
 
 var API_STROY_EXTRA = 'http://news-at.zhihu.com/api/4/story-extra/';
 
@@ -139,6 +140,7 @@ var DetailToolbar = React.createClass({
 var styles = StyleSheet.create({
   actionsContainer: {
     height: 56,
+    paddingTop: statusBarSize,
     flexDirection: 'row',
     alignItems: 'center',
   },

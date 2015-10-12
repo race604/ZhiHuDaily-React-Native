@@ -167,7 +167,7 @@ DataRepository.prototype.fetchThemeStories = function(themeId: number, lastID?: 
           reject(error);
         } else {
           var topDataRet;
-          if (values[1] && values[1].editors) {
+          if (values[1] && values[1].background) {
             topDataRet = {};
             topDataRet.description = values[1].description;
             topDataRet.background = values[1].background;

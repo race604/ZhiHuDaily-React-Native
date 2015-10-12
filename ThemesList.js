@@ -163,13 +163,11 @@ var styles = StyleSheet.create({
   row: {
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
   },
   menuContainer: {
     flex:1,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
     padding: 8,
   },
   menuText: {

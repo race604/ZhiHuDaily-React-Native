@@ -16,15 +16,17 @@ var ThemesList = require('./ThemesList');
 var DRAWER_REF = 'drawer';
 
 var MainScreen = React.createClass({
+  getInitialState: function() {
+    return ({
+      theme: null,
+    });
+  },
   onSelectTheme: function(theme) {
-    // this.drawer.closeDrawer();
-    // this.setState({
-    //   isLoading: this.state.isLoading,
-    //   isLoadingTail: this.state.isLoadingTail,
-    //   theme: theme,
-    //   dataSource: this.state.dataSource,
-    // });
-    // this.fetchStories(theme, true);
+    this.refs[DRAWER_REF].close();
+    this.setState({theme: theme});
+  },
+  onRefresh: function() {
+    this.onSelectTheme(this.state.theme);
   },
   render: function() {
     var drawer = <ThemesList onSelectItem={this.onSelectTheme} />;
@@ -34,7 +36,7 @@ var MainScreen = React.createClass({
           openDrawerOffset={100}
           panCloseMask={1}
           content={drawer} >
-          <StoriesList navigator={this.props.navigator}/>
+          <StoriesList theme={this.state.theme} navigator={this.props.navigator}/>
         </Drawer>
       );
   }
