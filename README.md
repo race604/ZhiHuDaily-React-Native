@@ -50,7 +50,7 @@ In this project, I used most of technology in React Native:
 2. ~~Add List header banner~~ (done)
 3. ~~Add splash animation~~ (done)
 4. ~~Add swipe/pull to refresh~~ (done)
-5. **iOS compatible**
+5. ~~**iOS compatible**~~(done 80% of code in common)
 
 ## License
 
