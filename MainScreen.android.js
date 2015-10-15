@@ -67,7 +67,7 @@ var MainScreen = React.createClass({
             titleColor="white"
             style={styles.toolbar}
             actions={toolbarActions}
-            onIconClicked={() => this.drawer.openDrawer()}
+            onIconClicked={() => this.refs[DRAWER_REF].openDrawer()}
             onActionSelected={this.onActionSelected} />
           <SwipeRefreshLayoutAndroid
             ref={(swipeRefreshLayout) => { this.swipeRefreshLayout = swipeRefreshLayout; }}
