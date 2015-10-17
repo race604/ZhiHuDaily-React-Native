@@ -8,15 +8,9 @@ import com.facebook.react.LifecycleState;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactRootView;
 import com.facebook.react.modules.core.DefaultHardwareBackBtnHandler;
-import com.race604.react.view.MyReactPackage;
+import com.facebook.react.shell.MainReactPackage;
+import com.race604.react.view.CustomReactPackage;
 import com.rctzhihudaily.BuildConfig;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 
 public class MainActivity extends Activity implements DefaultHardwareBackBtnHandler {
 
@@ -33,8 +27,8 @@ public class MainActivity extends Activity implements DefaultHardwareBackBtnHand
                 .setApplication(getApplication())
                 .setBundleAssetName("index.android.bundle")
                 .setJSMainModuleName("index.android")
-                //.addPackage(new MainReactPackage())
-                .addPackage(new MyReactPackage())
+                .addPackage(new MainReactPackage())
+                .addPackage(new CustomReactPackage())
                 .setUseDeveloperSupport(BuildConfig.DEBUG)
                 .setInitialLifecycleState(LifecycleState.RESUMED)
                 .build();
