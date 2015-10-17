@@ -31,7 +31,7 @@ public class CustomReactPackage implements ReactPackage {
 
     @Override
     public List<ViewManager> createViewManagers(ReactApplicationContext reactContext) {
-        List<ViewManager> result = new ArrayList<>();
+        List<ViewManager> result = new ArrayList<ViewManager>();
         result.add(new ReactWebViewManager());
         result.add(new ReactSwipeRefreshLayoutManager());
 
