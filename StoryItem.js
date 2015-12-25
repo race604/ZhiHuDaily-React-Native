@@ -13,14 +13,11 @@ var {
   View,
 } = React;
 
-var precomputeStyle = require('precomputeStyle');
-
 var TITLE_REF = 'title';
 
 var StoryItem = React.createClass({
   updateReadSate: function() {
-    var nativeProps = precomputeStyle({color: '#777777'}, ['color']);
-    this.refs[TITLE_REF].setNativeProps(nativeProps);
+    this.refs[TITLE_REF].setNativeProps({style: {color: '#777777'}});
     this.props.onSelect();
   },
   render: function() {

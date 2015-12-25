@@ -21,15 +21,13 @@
       "scale" : "3x"
     },
     {
-      "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "ic_launcher.png",
+      "size" : "60x60",
       "scale" : "2x"
     },
     {
-      "size" : "60x60",
       "idiom" : "iphone",
-      "filename" : "ic_launcher-1.png",
+      "size" : "60x60",
       "scale" : "3x"
     }
   ],

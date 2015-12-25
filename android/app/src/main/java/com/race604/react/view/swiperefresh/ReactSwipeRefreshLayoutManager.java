@@ -76,7 +76,7 @@ public class ReactSwipeRefreshLayoutManager extends ViewGroupManager<ReactSwipeR
     @Override
     public Map getExportedCustomDirectEventTypeConstants() {
         return MapBuilder.of(
-                RefreshEvent.EVENT_NAME, MapBuilder.of("registrationName", "onRefresh"));
+                RefreshEvent.EVENT_NAME, MapBuilder.of("registrationName", "onSwipeRefresh"));
     }
 
     @Override

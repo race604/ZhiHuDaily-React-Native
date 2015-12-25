@@ -2,6 +2,7 @@
 
 var React = require('react-native');
 var {
+  View,
   requireNativeComponent,
   PropTypes
 } = React;
@@ -27,12 +28,13 @@ class ObservableWebView extends React.Component {
 }
 
 ObservableWebView.propTypes = {
+  ...View.propTypes,
   url: PropTypes.string,
   html: PropTypes.string,
   css: PropTypes.string,
   onScrollChange: PropTypes.func,
 };
-// 
+//
 // ObservableWebView.viewConfig = {
 //   uiViewClassName: 'RCTWebView',
 //   validAttributes: ReactNativeViewAttributes.RKView

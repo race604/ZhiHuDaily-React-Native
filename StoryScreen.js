@@ -15,7 +15,6 @@ var {
   WebView,
 } = React;
 
-var MyWebView = (Platform.OS === 'ios') ? WebView : require('./WebView');
 var DetailToolbar = require('./DetailToolbar');
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
@@ -86,7 +85,7 @@ var StoryScreen = React.createClass({
           + '</body></html>';
         return (
           <View style={styles.container}>
-            <MyWebView
+            <WebView
               style={styles.content}
               html={html}
               onScrollChange={this.onWebViewScroll}/>

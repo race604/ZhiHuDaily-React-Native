@@ -71,7 +71,7 @@ var MainScreen = React.createClass({
             onActionSelected={this.onActionSelected} />
           <SwipeRefreshLayoutAndroid
             ref={(swipeRefreshLayout) => { this.swipeRefreshLayout = swipeRefreshLayout; }}
-            onRefresh={this.onRefresh}>
+            onSwipeRefresh={this.onRefresh}>
             <StoriesList theme={this.state.theme} navigator={this.props.navigator}
               onRefreshFinish={this.onRefreshFinish}/>
           </SwipeRefreshLayoutAndroid>
