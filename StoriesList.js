@@ -55,7 +55,6 @@ class StoriesList extends Component {
     this.renderPage = this.renderPage.bind(this);
     this.renderHeader = this.renderHeader.bind(this);
     this.onEndReached = this.onEndReached.bind(this);
-    this.selectStory = this.selectStory.bind(this);
   }
 
   componentWillUnmount() {
@@ -71,6 +70,7 @@ class StoriesList extends Component {
   }
 
   fetchStories(theme, isRefresh) {
+
     var themeId = theme ? theme.id : 0;
     var isInTheme = themeId !== 0
     var lastID = isRefresh ? null : dataCache.lastID[themeId];
@@ -168,7 +168,7 @@ class StoriesList extends Component {
     story: Object,
     pageID: number | string,) {
     return (
-      <TouchableOpacity style={{flex: 1}} onPress={() => {this.selectStory(story)}}>
+      <TouchableOpacity style={{flex: 1}} onPress={() => this.selectStory(story)}>
         <Image
           source={{uri: story.image}}
           style={styles.headerItem} >
@@ -248,11 +248,11 @@ class StoriesList extends Component {
 
   selectStory(story: Object) {
     story.read = true;
-      this.props.navigator.push({
-        title: story.title,
-        name: 'story',
-        story: story,
-      });
+    this.props.navigator.push({
+      title: story.title,
+      name: 'story',
+      story: story,
+    });
   }
 
   renderRow(
@@ -296,7 +296,6 @@ class StoriesList extends Component {
   }
 
   render() {
-
     var content = this.state.dataSource.getRowCount() === 0 ?
       <View style={styles.centerEmpty}>
         <Text>{this.state.isLoading ? '正在加载...' : '加载失败'}</Text>

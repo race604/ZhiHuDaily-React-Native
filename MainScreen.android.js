@@ -37,8 +37,8 @@ class MainScreen extends Component {
     };
 
     this.onSelectTheme = this.onSelectTheme.bind(this);
-    this.renderNavigationView = this.renderNavigationView.bind(this);
     this.onRefresh = this.onRefresh.bind(this);
+    this._renderNavigationView = this._renderNavigationView.bind(this);
   }
 
   onSelectTheme(theme) {
@@ -46,7 +46,7 @@ class MainScreen extends Component {
     this.setState({theme: theme});
   }
 
-  renderNavigationView() {
+  _renderNavigationView() {
     return (
       <ThemesList
         onSelectItem={this.onSelectTheme}
@@ -70,7 +70,7 @@ class MainScreen extends Component {
         drawerWidth={Dimensions.get('window').width - DRAWER_WIDTH_LEFT}
         keyboardDismissMode="on-drag"
         drawerPosition={DrawerLayoutAndroid.positions.Left}
-        renderNavigationView={this.renderNavigationView}>
+        renderNavigationView={this._renderNavigationView}>
         <View style={styles.container}>
           <ToolbarAndroid
             navIcon={require('image!ic_menu_white')}
@@ -79,7 +79,7 @@ class MainScreen extends Component {
             style={styles.toolbar}
             actions={toolbarActions}
             onIconClicked={() => this.refs[DRAWER_REF].openDrawer()}
-            onActionSelected={this.onActionSelected } />
+            onActionSelected={this.onActionSelected} />
           <SwipeRefreshLayoutAndroid
             ref={(swipeRefreshLayout) => { this.swipeRefreshLayout = swipeRefreshLayout; }}
             onSwipeRefresh={this.onRefresh}>

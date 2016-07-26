@@ -65,7 +65,6 @@ class StoryScreen extends Component {
   }
 
   onWebViewScroll(event) {
-    //console.log('ScrollY: ' + event);
     var scrollY = -event / PIXELRATIO;
     this.state.scrollValue.setValue(scrollY);
   }

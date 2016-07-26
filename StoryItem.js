@@ -17,6 +17,10 @@ var TITLE_REF = 'title';
 
 class StoryItem extends Component {
 
+  constructor(props){
+    super(props);
+    this.updateReadSate = this.updateReadSate.bind(this);
+  }
   updateReadSate() {
     this.refs[TITLE_REF].setNativeProps({style: {color: '#777777'}});
     this.props.onSelect();
@@ -35,12 +39,8 @@ class StoryItem extends Component {
     }
 
     return (
-      <View {...this.props}>
         <TouchableElement
-          onPress={() => {
-            this.refs[TITLE_REF].setNativeProps({style: {color: '#777777'}});
-            this.props.onSelect();
-          }}
+          onPress={this.updateReadSate}
           onShowUnderlay={this.props.onHighlight}
           onHideUnderlay={this.props.onUnhighlight}>
           <View style={styles.row}>
@@ -53,7 +53,6 @@ class StoryItem extends Component {
             {image}
           </View>
         </TouchableElement>
-      </View>
     );
   }
 }

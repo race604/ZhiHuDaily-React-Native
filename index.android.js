@@ -22,14 +22,6 @@ import MainScreen from './MainScreen';
 import StoryScreen from './StoryScreen';
 import TimerMixin from 'react-timer-mixin';
 
-var _navigator;
-BackAndroid.addEventListener('hardwareBackPress', function() {
-  if (_navigator && _navigator.getCurrentRoutes().length > 1) {
-    _navigator.pop();
-    return true;
-  }
-  return false;
-});
 
 class RCTZhiHuDaily extends Component {
 
@@ -49,7 +41,13 @@ class RCTZhiHuDaily extends Component {
   }
 
   RouteMapper(route, navigationOperations, onComponentRef) {
-    _navigator = navigationOperations;
+    BackAndroid.addEventListener('hardwareBackPress', function() {
+    if (navigationOperations && navigationOperations.getCurrentRoutes().length > 1) {
+        navigationOperations.pop();
+        return true;
+      }
+    return false;
+    });
     if (route.name === 'home') {
       return (
         <View style={styles.container}>
