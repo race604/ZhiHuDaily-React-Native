@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   AppRegistry,
   Platform,
   PixelRatio,
@@ -12,25 +12,31 @@ var {
   TouchableNativeFeedback,
   TouchableHighlight,
   ToastAndroid,
-} = React;
+} from 'react-native';
 
-var SwitchAndroid = require('SwitchAndroid');
-var ToolbarAndroid = require('ToolbarAndroid');
+import SwitchAndroid from 'SwitchAndroid';
+import ToolbarAndroid from 'ToolbarAndroid';
+
 var statusBarSize = Platform.OS == 'ios' ? 10 : 0;
 
 var API_STROY_EXTRA = 'http://news-at.zhihu.com/api/4/story-extra/';
 
-var DetailToolbar = React.createClass({
-  getInitialState: function() {
-    return({
+class DetailToolbar extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
       isLoading: true,
       extra: null,
-    });
-  },
-  componentDidMount: function() {
+    }
+    this.onPressBackButton = this.onPressBackButton.bind(this);
+  }
+
+  componentDidMount() {
     this.fetchStroyExtra();
-  },
-  fetchStroyExtra: function() {
+  }
+
+  fetchStroyExtra() {
     fetch(API_STROY_EXTRA + this.props.story.id)
       .then((response) => response.json())
       .then((responseData) => {
@@ -46,29 +52,35 @@ var DetailToolbar = React.createClass({
         });
       })
       .done();
-  },
-  _onPressBackButton: function() {
+  }
+
+  onPressBackButton() {
     if (this.props.navigator) {
       this.props.navigator.pop();
     }
-  },
-  _onPressShareButton: function() {
+  }
+
+  onPressShareButton() {
     // TODO:
     ToastAndroid.show('分享', ToastAndroid.SHORT);
-  },
-  _onPressCollectButton: function() {
+  }
+
+  onPressCollectButton() {
     // TODO:
     ToastAndroid.show('收藏', ToastAndroid.SHORT);
-  },
-  _onPressCommentButton: function() {
+  }
+
+  onPressCommentButton() {
     // TODO:
     ToastAndroid.show('评论', ToastAndroid.SHORT);
-  },
-  _onPressPriseButton: function() {
+  }
+
+  onPressPriseButton() {
     // TODO:
     ToastAndroid.show('赞', ToastAndroid.SHORT);
-  },
-  render: function() {
+  }
+
+  render() {
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -124,18 +136,10 @@ var DetailToolbar = React.createClass({
             </View>
           </TouchableElement>
         </View>
-
       </View>
-      // <ToolbarAndroid
-      //   navIcon={require('image!ic_back_white')}
-      //   onIconClicked={this.props.navigator.pop}
-      //   titleColor="white"
-      //   actions={[]} >
-      // </ToolbarAndroid>
     );
-  },
-
-});
+  }
+}
 
 var styles = StyleSheet.create({
   actionsContainer: {
@@ -174,4 +178,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = DetailToolbar;
+export default DetailToolbar;

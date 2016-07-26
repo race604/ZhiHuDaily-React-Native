@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   AppRegistry,
   PixelRatio,
   StyleSheet,
@@ -13,29 +13,35 @@ var {
   Animated,
   Platform,
   WebView,
-} = React;
+} from 'react-native';
 
-var DetailToolbar = require('./DetailToolbar');
-var MyWebView = (Platform.OS === 'ios') ? WebView : require('./WebView');
+import DetailToolbar from './DetailToolbar';
+import ObservableWebView from './WebView';
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
 var REF_HEADER = 'header';
 var PIXELRATIO = PixelRatio.get();
 var HEADER_SIZE = 200;
 
-var StoryScreen = React.createClass({
-  getInitialState: function() {
-    return({
+class StoryScreen extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
       isLoading: false,
       detail: null,
       scrollY: 0,
-      scrollValue: new Animated.Value(0)
-    });
-  },
-  componentDidMount: function() {
+      scrollValue: new Animated.Value(0),
+    }
+
+    this.onWebViewScroll = this.onWebViewScroll.bind(this);
+  }
+
+  componentDidMount() {
     this.fetchStroyDetail();
-  },
-  fetchStroyDetail: function() {
+  }
+
+  fetchStroyDetail() {
     var reqUrl = BASE_URL + this.props.story.id;
     this.setState({
       isLoading: true,
@@ -56,14 +62,15 @@ var StoryScreen = React.createClass({
         });
       })
       .done();
-  },
-  onWebViewScroll: function(event) {
+  }
+
+  onWebViewScroll(event) {
     //console.log('ScrollY: ' + event);
     var scrollY = -event / PIXELRATIO;
     this.state.scrollValue.setValue(scrollY);
-  },
-  render: function() {
+  }
 
+  render() {
     var toolbar = <DetailToolbar navigator={this.props.navigator} style={styles.toolbar}
       story={this.props.story}/>;
     if (this.state.isLoading) {
@@ -86,7 +93,7 @@ var StoryScreen = React.createClass({
           + '</body></html>';
         return (
           <View style={styles.container}>
-            <MyWebView
+            <ObservableWebView
               style={styles.content}
               html={html}
               onScrollChange={this.onWebViewScroll}/>
@@ -118,7 +125,7 @@ var StoryScreen = React.createClass({
     }
 
   }
-});
+}
 
 var styles = StyleSheet.create({
   toolbar: {
@@ -173,4 +180,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = StoryScreen;
+export default StoryScreen;

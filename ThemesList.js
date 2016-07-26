@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   AsyncStorage,
   Platform,
   ListView,
@@ -11,27 +11,29 @@ var {
   View,
   TouchableNativeFeedback,
   TouchableHighlight,
-} = React
-
-var DataRepository = require('./DataRepository');
+} from 'react-native';
+import DataRepository from './DataRepository';
 
 var repository = new DataRepository();
 
-var ThemesList = React.createClass({
-  getInitialState: function() {
-    var dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-    });
+class ThemesList extends Component {
 
-    return {
+  constructor(props){
+    super(props)
+    this.state = {
       isLoading: false,
-      dataSource: dataSource,
-    };
-  },
-  componentDidMount: function() {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+      }),
+    }
+    this.renderRow = this.renderRow.bind(this);
+  }
+
+  componentDidMount() {
     this.fetchThemes();
-  },
-  fetchThemes: function() {
+  }
+
+  fetchThemes() {
     repository.getThemes()
       .then((themes) => {
         this.setState({
@@ -46,8 +48,9 @@ var ThemesList = React.createClass({
         });
       })
       .done();
-  },
-  renderHeader: function() {
+  }
+
+  renderHeader() {
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -100,8 +103,9 @@ var ThemesList = React.createClass({
         </TouchableElement>
       </View>
     );
-  },
-  renderRow: function(
+  }
+
+  renderRow(
     theme: Object,
     sectionID: number | string,
     rowID: number | string,
@@ -127,8 +131,9 @@ var ThemesList = React.createClass({
         </TouchableElement>
       </View>
     );
-  },
-  render: function() {
+  }
+
+  render() {
     return (
       <View style={styles.container} {...this.props}>
         <ListView
@@ -144,8 +149,9 @@ var ThemesList = React.createClass({
         />
       </View>
     );
-  },
-});
+  }
+
+}
 
 var styles = StyleSheet.create({
   container: {
@@ -212,4 +218,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = ThemesList;
+export default ThemesList;

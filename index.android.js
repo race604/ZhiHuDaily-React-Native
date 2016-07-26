@@ -4,26 +4,23 @@
  */
 'use strict';
 
-var React = require('react-native');
-
-var {
+import React, { Component } from 'React';
+import {
   AppRegistry,
   BackAndroid,
   Text,
   View,
   Navigator,
   StyleSheet,
-  ToolbarAndroid,
   ToastAndroid,
-} = React;
+  InteractionManager,
+} from 'react-native';
 
-var ToolbarAndroid = require('ToolbarAndroid');
-
-var TimerMixin = require('react-timer-mixin');
-
-var SplashScreen = require('./SplashScreen');
-var MainScreen = require('./MainScreen');
-var StoryScreen = require('./StoryScreen');
+import ToolbarAndroid from 'ToolbarAndroid';
+import SplashScreen from './SplashScreen';
+import MainScreen from './MainScreen';
+import StoryScreen from './StoryScreen';
+import TimerMixin from 'react-timer-mixin';
 
 var _navigator;
 BackAndroid.addEventListener('hardwareBackPress', function() {
@@ -34,17 +31,24 @@ BackAndroid.addEventListener('hardwareBackPress', function() {
   return false;
 });
 
-var RCTZhiHuDaily = React.createClass({
-  mixins: [TimerMixin],
-  componentDidMount: function() {
-    this.setTimeout(
+class RCTZhiHuDaily extends Component {
+
+  constructor(props){
+    super(props);
+    this.state = {
+      splashed:false
+    }
+  }
+  componentDidMount() {
+    this.timer = setTimeout(
       () => {
         this.setState({splashed: true});
       },
       2000,
     );
-  },
-  RouteMapper: function(route, navigationOperations, onComponentRef) {
+  }
+
+  RouteMapper(route, navigationOperations, onComponentRef) {
     _navigator = navigationOperations;
     if (route.name === 'home') {
       return (
@@ -62,15 +66,12 @@ var RCTZhiHuDaily = React.createClass({
         </View>
       );
     }
-  },
-  getInitialState: function() {
-    return {
-      splashed: false,
-    };
-  },
-  onActionSelected: function(position) {
-  },
-  render: function() {
+  }
+
+  onActionSelected(position) {
+  }
+
+  render() {
     if (this.state.splashed) {
       var initialRoute = {name: 'home'};
       return (
@@ -87,7 +88,7 @@ var RCTZhiHuDaily = React.createClass({
       );
     }
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {

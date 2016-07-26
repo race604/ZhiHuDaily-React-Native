@@ -1,54 +1,59 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   AsyncStorage,
   Image,
   StyleSheet,
   Text,
   View,
-  Dimensions,
-} = React;
+} from 'react-native';
 
-var Animated = require('Animated');
+import {
+  getWindowWidth,
+} from './CommonUtils';
 
-var WINDOW_WIDTH = Dimensions.get('window').width;
+import Animated from 'Animated';
+import DataRepository from './DataRepository';
 
-var DataRepository = require('./DataRepository');
-var repository = new DataRepository();
+class SplashScreen extends Component {
 
-var SplashScreen = React.createClass({
-  fetchData: function() {
-    repository.getCover()
+  constructor(props) {
+    super(props);
+    this.state = {
+      cover: null,
+      bounceValue: new Animated.Value(1),
+    }
+  }
+
+  fetchData() {
+    new DataRepository()
+      .getCover()
       .then((result) => {
         if (result){
-          this.setState({cover: result});
+          this.setState({
+            cover: result
+          });
+          Animated.timing(
+            this.state.bounceValue,
+            {
+              toValue: 1.5,
+              duration: 3000,
+            }
+          ).start();
         }
       })
       .catch((error) => {
         console.error(error);
       })
       .done();
-    repository.updateCover();
-  },
-  getInitialState: function() {
-    return {
-      cover: null,
-      bounceValue: new Animated.Value(1),
-    };
-  },
-  componentDidMount: function() {
+  }
+
+  componentDidMount() {
     this.fetchData();
-    this.state.bounceValue.setValue(1);
-    Animated.timing(
-      this.state.bounceValue,
-      {
-        toValue: 1.2,
-        duration: 5000,
-      }
-    ).start();
-  },
-  render: function() {
+  }
+
+  render() {
     var img, text;
     if (this.state.cover) {
       img = {uri: this.state.cover.img};
@@ -64,51 +69,45 @@ var SplashScreen = React.createClass({
           source={img}
           style={{
             flex: 1,
-            width: WINDOW_WIDTH,
+            width: getWindowWidth(),
             height: 1,
             transform: [
-              {scale: this.state.bounceValue},
+              {
+                scale: this.state.bounceValue
+              },
             ]
           }} />
-        <Text style={styles.text}>
-            {text}
-        </Text>
-        <Image style={styles.logo} source={require('image!splash_logo')} />
+
+        <View style = {styles.bottomContainer}>
+          <Image style={styles.logo} source={require('image!splash_logo')} />
+          <Text style={styles.text}> {text} </Text>
+        </View>
       </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
   },
-  cover: {
-    flex: 1,
-    width: 200,
-    height: 1,
+  bottomContainer: {
+    position:'absolute',
+    bottom:20,
+    flexDirection: 'column',
+    justifyContent: 'center',
   },
   logo: {
     resizeMode: 'contain',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 30,
-    height: 54,
+    height:60,
     backgroundColor: 'transparent',
   },
   text: {
-    flex: 1,
     fontSize: 16,
-    textAlign: 'center',
+    alignSelf:'center',
     color: 'white',
-    position: 'absolute',
-    left: 0,
-    right: 0,
-    bottom: 10,
     backgroundColor: 'transparent',
   }
 });
 
-module.exports = SplashScreen;
+export default SplashScreen;

@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   AsyncStorage,
   Platform,
   Dimensions,
@@ -11,22 +11,20 @@ var {
   Text,
   View,
   TouchableOpacity,
-} = React
+} from 'react-native';
 
-var StoryItem = require('./StoryItem');
-var ThemesList = require('./ThemesList');
-var DataRepository = require('./DataRepository');
-var ViewPager = require('react-native-viewpager');
-var StoryScreen = require('./StoryScreen');
+import {
+  parseDateFromYYYYMMdd,
+} from './FormatUtils';
+
+import StoryItem from './StoryItem';
+import ThemesList from './ThemesList';
+import DataRepository from './DataRepository';
+import ViewPager from 'react-native-viewpager';
+import StoryScreen from './StoryScreen';
 
 var LOADING = {};
 var WEEKDAY = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-var DRAWER_WIDTH_LEFT = 56;
-var toolbarActions = [
-  {title: '提醒', icon: require('image!ic_message_white'), show: 'always'},
-  {title: '夜间模式', show: 'never'},
-  {title: '设置选项', show: 'never'},
-];
 
 var repository = new DataRepository();
 
@@ -37,47 +35,42 @@ var dataCache = {
   lastID: {},
 };
 
-function parseDateFromYYYYMMdd(str) {
-  if (!str) return new Date();
-  return new Date(str.slice(0, 4),str.slice(4, 6) - 1,str.slice(6, 8));
-}
+class StoriesList extends Component {
 
-Date.prototype.yyyymmdd = function() {
-  var yyyy = this.getFullYear().toString();
-  var mm = (this.getMonth()+1).toString(); // getMonth() is zero-based
-  var dd  = this.getDate().toString();
-  return yyyy + (mm[1]?mm:"0"+mm[0]) + (dd[1]?dd:"0"+dd[0]); // padding
-};
-
-var StoriesList = React.createClass({
-
-  getInitialState: function() {
-    var dataSource = new ListView.DataSource({
-      rowHasChanged: (row1, row2) => row1 !== row2,
-      sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
-    });
-
-    var headerDataSource = new ViewPager.DataSource({
-      pageHasChanged: (p1, p2) => p1 !== p2,
-    });
-
-    return {
+  constructor(props) {
+    super(props);
+    this.state = {
       isLoading: false,
       isLoadingTail: false,
-      dataSource: dataSource,
-      headerDataSource: headerDataSource,
-    };
-  },
-  componentWillUnmount: function() {
+      dataSource: new ListView.DataSource({
+        rowHasChanged: (row1, row2) => row1 !== row2,
+        sectionHeaderHasChanged: (s1, s2) => s1 !== s2,
+      }),
+      headerDataSource: new ViewPager.DataSource({
+        pageHasChanged: (p1, p2) => p1 !== p2,
+      })
+    }
+    this.renderRow = this.renderRow.bind(this);
+    this.renderSectionHeader = this.renderSectionHeader.bind(this);
+    this.renderPage = this.renderPage.bind(this);
+    this.renderHeader = this.renderHeader.bind(this);
+    this.onEndReached = this.onEndReached.bind(this);
+    this.selectStory = this.selectStory.bind(this);
+  }
+
+  componentWillUnmount() {
     repository.saveStories(dataCache.dataForTheme, dataCache.topDataForTheme);
-  },
-  componentDidMount: function() {
+  }
+
+  componentDidMount() {
     this.fetchStories(this.props.theme, true);
-  },
+  }
+
   componentWillReceiveProps(nextProps) {
     this.fetchStories(nextProps.theme, true);
-  },
-  fetchStories: function(theme, isRefresh) {
+  }
+
+  fetchStories(theme, isRefresh) {
     var themeId = theme ? theme.id : 0;
     var isInTheme = themeId !== 0
     var lastID = isRefresh ? null : dataCache.lastID[themeId];
@@ -149,9 +142,6 @@ var StoriesList = React.createClass({
         dataCache.dataForTheme[themeId] = dataBlob;
         dataCache.topDataForTheme[themeId] = topData;
 
-        // console.log('lastID: ' + lastID);
-        // console.log('newLastID: ' + newLastID);
-
         LOADING[themeId] = false;
         this.setState({
           isLoading: (isRefresh ? false : this.state.isLoading),
@@ -172,8 +162,9 @@ var StoriesList = React.createClass({
         isRefresh && this.props.onRefreshFinish && this.props.onRefreshFinish();
       })
       .done();
-  },
-  _renderPage: function(
+  }
+
+  renderPage(
     story: Object,
     pageID: number | string,) {
     return (
@@ -190,8 +181,9 @@ var StoriesList = React.createClass({
         </Image>
       </TouchableOpacity>
     )
-  },
-  _renderHeader: function() {
+  }
+
+  renderHeader() {
     if (this.props.theme) {
       var themeId = this.props.theme ? this.props.theme.id : 0;
       var topData = dataCache.topDataForTheme[themeId];
@@ -208,7 +200,7 @@ var StoriesList = React.createClass({
 
       return (
         <View style={{flex: 1}}>
-          {this._renderPage({image: topData.background, title: topData.description}, 0)}
+          {this.renderPage({image: topData.background, title: topData.description}, 0)}
           <View style={styles.editors}>
             <Text style={styles.editorsLable}>主编:</Text>
             {editorsAvator}
@@ -221,14 +213,15 @@ var StoriesList = React.createClass({
           <ViewPager
             dataSource={this.state.headerDataSource}
             style={styles.listHeader}
-            renderPage={this._renderPage}
+            renderPage={this.renderPage}
             isLoop={true}
             autoPlay={true} />
         </View>
       );
     }
-  },
-  getSectionTitle: function(str) {
+  }
+
+  getSectionTitle(str) {
     var date = parseDateFromYYYYMMdd(str);
     if (date.toDateString() == new Date().toDateString()) {
       return '今日热闻';
@@ -236,8 +229,9 @@ var StoriesList = React.createClass({
     var title = str.slice(4, 6)  + '月' + str.slice(6, 8) + '日';
     title += ' ' + WEEKDAY[date.getDay()];
     return title;
-  },
-  renderSectionHeader: function(sectionData: Object,
+  }
+
+  renderSectionHeader(sectionData: Object,
     sectionID: number | string) {
     if (this.props.theme) {
       return (
@@ -250,24 +244,18 @@ var StoriesList = React.createClass({
         </Text>
       );
     }
-  },
-  selectStory: function(story: Object) {
+  }
+
+  selectStory(story: Object) {
     story.read = true;
-    // if (Platform.OS === 'ios') {
-    //   this.props.navigator.push({
-    //     title: story.title,
-    //     component: StoryScreen,
-    //     passProps: {story},
-    //   });
-    // } else {
       this.props.navigator.push({
         title: story.title,
         name: 'story',
         story: story,
       });
-    // }
-  },
-  renderRow: function(
+  }
+
+  renderRow(
     story: Object,
     sectionID: number | string,
     rowID: number | string,
@@ -282,16 +270,17 @@ var StoriesList = React.createClass({
         story={story}
       />
     );
-  },
-  onEndReached: function() {
+  }
+
+  onEndReached() {
     console.log('onEndReached() ' + this.state.isLoadingTail);
     if (this.state.isLoadingTail) {
       return;
     }
     this.fetchStories(this.props.theme, false);
-  },
-  setTheme: function(theme) {
-    // ToastAndroid.show('选择' + theme.name, ToastAndroid.SHORT);
+  }
+
+  setTheme(theme) {
     this.drawer.closeDrawer();
     this.setState({
       isLoading: this.state.isLoading,
@@ -300,11 +289,14 @@ var StoriesList = React.createClass({
       dataSource: this.state.dataSource,
     });
     this.fetchStories(theme, true);
-  },
-  onRefresh: function() {
+  }
+
+  onRefresh() {
     this.onSelectTheme(this.props.theme);
-  },
-  render: function() {
+  }
+
+  render() {
+
     var content = this.state.dataSource.getRowCount() === 0 ?
       <View style={styles.centerEmpty}>
         <Text>{this.state.isLoading ? '正在加载...' : '加载失败'}</Text>
@@ -320,11 +312,12 @@ var StoriesList = React.createClass({
         keyboardDismissMode="on-drag"
         keyboardShouldPersistTaps={true}
         showsVerticalScrollIndicator={false}
-        renderHeader={this._renderHeader}
+        renderHeader={this.renderHeader}
       />;
+
     return content;
   }
-});
+}
 
 var styles = StyleSheet.create({
   centerEmpty: {
@@ -397,4 +390,4 @@ var styles = StyleSheet.create({
   }
 });
 
-module.exports = StoriesList;
+export default StoriesList;
