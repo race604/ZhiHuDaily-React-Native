@@ -1,34 +1,27 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   requireNativeComponent,
   PropTypes,
   StyleSheet,
   View,
-} = React;
+} from 'react-native';
 
-var createReactNativeComponentClass = require('createReactNativeComponentClass');
-var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
-var RCTUIManager = require('NativeModules').UIManager;
-
-var NativeMethodsMixin = require('NativeMethodsMixin');
+import createReactNativeComponentClass from 'createReactNativeComponentClass';
+import ReactNativeViewAttributes from 'ReactNativeViewAttributes';
+import RCTUIManager from 'NativeModules';
 
 var RK_SWIPE_REF = 'swiperefreshlayout';
 var INNERVIEW_REF = 'innerView';
 
-var SwipeRefreshLayoutAndroid = React.createClass({
-  propTypes: {
-    onRefresh: PropTypes.func,
-  },
+class SwipeRefreshLayoutAndroid extends Component {
 
-  mixins: [NativeMethodsMixin],
-
-  getInnerViewNode: function() {
+  getInnerViewNode() {
     return this.refs[INNERVIEW_REF].getInnerViewNode();
-  },
+  }
 
-  render: function() {
+  render() {
     var childrenWrapper =
       <View ref={INNERVIEW_REF} style={styles.mainSubview} collapsable={false}>
         {this.props.children}
@@ -42,34 +35,34 @@ var SwipeRefreshLayoutAndroid = React.createClass({
         {childrenWrapper}
       </AndroidSwipeRefreshLayout>
     );
-  },
+  }
 
-  _onRefresh: function() {
+  _onRefresh() {
     if (this.props.onRefresh) {
       this.props.onRefresh();
     }
-  },
+  }
 
-  startRefresh: function() {
+  startRefresh() {
     RCTUIManager.dispatchViewManagerCommand(
       this._getSwipeRefreshLayoutHandle(),
       RCTUIManager.AndroidSwipeRefreshLayout.Commands.startRefresh,
       null
     );
-  },
+  }
 
-  finishRefresh: function() {
+  finishRefresh() {
     RCTUIManager.dispatchViewManagerCommand(
       this._getSwipeRefreshLayoutHandle(),
       RCTUIManager.AndroidSwipeRefreshLayout.Commands.finishRefresh,
       null
     );
-  },
+  }
 
-  _getSwipeRefreshLayoutHandle: function() {
+  _getSwipeRefreshLayoutHandle() {
     return React.findNodeHandle(this.refs[RK_SWIPE_REF]);
-  },
-});
+  }
+}
 
 var styles = StyleSheet.create({
   base: {
@@ -89,4 +82,9 @@ var AndroidSwipeRefreshLayout = createReactNativeComponentClass({
   uiViewClassName: 'AndroidSwipeRefreshLayout',
 });
 
-module.exports = SwipeRefreshLayoutAndroid;
+SwipeRefreshLayoutAndroid.propTypes = {
+  ...View.propTypes,
+  onRefresh: PropTypes.func,
+};
+
+export default SwipeRefreshLayoutAndroid;

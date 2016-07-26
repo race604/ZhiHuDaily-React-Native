@@ -1,10 +1,8 @@
 'use strict';
 
-var React = require('react-native');
-
-var {
+import {
   AsyncStorage,
-} = React;
+} from 'react-native';
 
 var API_COVER_URL = "http://news-at.zhihu.com/api/4/start-image/1080*1776";
 var API_LATEST_URL = 'http://news-at.zhihu.com/api/4/news/latest';

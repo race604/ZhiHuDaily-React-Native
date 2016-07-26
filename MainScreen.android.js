@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   AsyncStorage,
   Image,
   StyleSheet,
@@ -13,12 +13,12 @@ var {
   BackAndroid,
   TouchableOpacity,
   Dimensions,
-} = React;
+} from 'react-native';
 
-var Drawer = require('react-native-drawer');
-var StoriesList = require('./StoriesList');
-var ThemesList = require('./ThemesList');
-var SwipeRefreshLayoutAndroid = require('./SwipeRereshLayout');
+import Drawer from 'react-native-drawer';
+import StoriesList from './StoriesList';
+import ThemesList from './ThemesList';
+import SwipeRefreshLayoutAndroid from './SwipeRereshLayout';
 
 var DRAWER_REF = 'drawer';
 var DRAWER_WIDTH_LEFT = 56;
@@ -28,30 +28,41 @@ var toolbarActions = [
   {title: '设置选项', show: 'never'},
 ];
 
-var MainScreen = React.createClass({
-  getInitialState: function() {
-    return ({
-      theme: null,
-    });
-  },
-  onSelectTheme: function(theme) {
+class MainScreen extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state = {
+      theme: null
+    };
+
+    this.onSelectTheme = this.onSelectTheme.bind(this);
+    this.onRefresh = this.onRefresh.bind(this);
+    this._renderNavigationView = this._renderNavigationView.bind(this);
+  }
+
+  onSelectTheme(theme) {
     this.refs[DRAWER_REF].closeDrawer();
     this.setState({theme: theme});
-  },
-  _renderNavigationView: function() {
+  }
+
+  _renderNavigationView() {
     return (
       <ThemesList
         onSelectItem={this.onSelectTheme}
       />
     );
-  },
-  onRefresh: function() {
+  }
+
+  onRefresh() {
     this.onSelectTheme(this.state.theme);
-  },
-  onRefreshFinish: function() {
+  }
+
+  onRefreshFinish() {
     this.swipeRefreshLayout && this.swipeRefreshLayout.finishRefresh();
-  },
-  render: function() {
+  }
+
+  render() {
     var title = this.state.theme ? this.state.theme.name : '首页';
     return (
       <DrawerLayoutAndroid
@@ -80,8 +91,7 @@ var MainScreen = React.createClass({
 
     );
   }
-
-});
+}
 
 var styles = StyleSheet.create({
   container: {
@@ -95,4 +105,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = MainScreen;
+export default MainScreen;

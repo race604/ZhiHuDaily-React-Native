@@ -1,21 +1,26 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'React';
+import {
   View,
   requireNativeComponent,
   PropTypes
-} = React;
+} from 'react-native';
 
-var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
+import ReactNativeViewAttributes from 'ReactNativeViewAttributes';
 
-class ObservableWebView extends React.Component {
+var RCTWebView = requireNativeComponent('RCTWebView', ObservableWebView, {
+  nativeOnly: {onChange: true}
+});
+
+class ObservableWebView extends Component {
+
   constructor() {
     super();
-    this._onChange = this._onChange.bind(this);
+    this.onChange = this.onChange.bind(this);
   }
 
-  _onChange(event: Event) {
+  onChange(event: Event) {
     if (!this.props.onScrollChange) {
       return;
     }
@@ -23,7 +28,7 @@ class ObservableWebView extends React.Component {
   }
 
   render() {
-    return <RCTWebView {...this.props} onChange={this._onChange} />;
+    return <RCTWebView {...this.props} onChange={this.onChange} />;
   }
 }
 
@@ -34,14 +39,5 @@ ObservableWebView.propTypes = {
   css: PropTypes.string,
   onScrollChange: PropTypes.func,
 };
-//
-// ObservableWebView.viewConfig = {
-//   uiViewClassName: 'RCTWebView',
-//   validAttributes: ReactNativeViewAttributes.RKView
-// };
 
-var RCTWebView = requireNativeComponent('RCTWebView', ObservableWebView, {
-  nativeOnly: {onChange: true}
-});
-
-module.exports = ObservableWebView;
+export default ObservableWebView;

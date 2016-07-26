@@ -1,8 +1,8 @@
 'use strict';
 
-var React = require('react-native');
+import React, { Component } from 'React';
 
-var {
+import {
   Image,
   PixelRatio,
   Platform,
@@ -11,16 +11,22 @@ var {
   TouchableHighlight,
   TouchableNativeFeedback,
   View,
-} = React;
+} from 'react-native';
 
 var TITLE_REF = 'title';
 
-var StoryItem = React.createClass({
-  updateReadSate: function() {
+class StoryItem extends Component {
+
+  constructor(props){
+    super(props);
+    this.updateReadSate = this.updateReadSate.bind(this);
+  }
+  updateReadSate() {
     this.refs[TITLE_REF].setNativeProps({style: {color: '#777777'}});
     this.props.onSelect();
-  },
-  render: function() {
+  }
+
+  render() {
     var TouchableElement = TouchableHighlight;
     if (Platform.OS === 'android') {
       TouchableElement = TouchableNativeFeedback;
@@ -33,15 +39,11 @@ var StoryItem = React.createClass({
     }
 
     return (
-      <View {...this.props}>
         <TouchableElement
-          onPress={this.updateReadSate /*this.props.onSelect*/}
+          onPress={this.updateReadSate}
           onShowUnderlay={this.props.onHighlight}
           onHideUnderlay={this.props.onUnhighlight}>
           <View style={styles.row}>
-            {/* $FlowIssue #7363964 - There's a bug in Flow where you cannot
-              * omit a property or set it to undefined if it's inside a shape,
-              * even if it isn't required */}
             <Text
               ref={TITLE_REF}
               style={this.props.story.read ? styles.storyTitleRead : styles.storyTitle}
@@ -51,10 +53,9 @@ var StoryItem = React.createClass({
             {image}
           </View>
         </TouchableElement>
-      </View>
     );
   }
-});
+}
 
 var styles = StyleSheet.create({
   storyTitle: {
@@ -90,4 +91,4 @@ var styles = StyleSheet.create({
   },
 });
 
-module.exports = StoryItem;
+export default StoryItem;
