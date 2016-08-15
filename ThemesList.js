@@ -1,17 +1,17 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'react';
+import {
   AsyncStorage,
-  Platform,
-  ListView,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  TouchableNativeFeedback,
-  TouchableHighlight,
-} = React
+    Platform,
+    ListView,
+    Image,
+    StyleSheet,
+    Text,
+    View,
+    TouchableNativeFeedback,
+    TouchableHighlight
+} from 'react-native';
 
 var DataRepository = require('./DataRepository');
 

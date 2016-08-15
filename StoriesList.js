@@ -1,7 +1,7 @@
 'use strict';
 
-var React = require('react-native');
-var {
+import React, { Component } from 'react';
+import {
   AsyncStorage,
   Platform,
   Dimensions,
@@ -11,7 +11,7 @@ var {
   Text,
   View,
   TouchableOpacity,
-} = React
+} from 'react-native';
 
 var StoryItem = require('./StoryItem');
 var ThemesList = require('./ThemesList');

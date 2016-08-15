@@ -1,11 +1,10 @@
 'use strict';
 
-var React = require('react-native');
-var {
-  View,
-  requireNativeComponent,
-  PropTypes
-} = React;
+import React, { PropTypes, Component } from 'react';
+import {
+      View,
+      requireNativeComponent,
+} from 'react-native';
 
 var ReactNativeViewAttributes = require('ReactNativeViewAttributes');
 
@@ -33,6 +32,25 @@ ObservableWebView.propTypes = {
   html: PropTypes.string,
   css: PropTypes.string,
   onScrollChange: PropTypes.func,
+  javaScriptEnabled: React.PropTypes.bool,
+  domStorageEnabled: React.PropTypes.bool,
+  userAgent: React.PropTypes.string,
+  mediaPlaybackRequiresUserAction: React.PropTypes.bool,
+  source: PropTypes.oneOfType([
+            PropTypes.shape({
+                   uri: PropTypes.string,
+                   method: PropTypes.oneOf(['GET', 'POST']),
+                   headers: PropTypes.object,
+                   body: PropTypes.string,
+                   }),
+            PropTypes.shape({
+                   html: PropTypes.string,
+                   baseUrl: PropTypes.string,
+                   }),
+            PropTypes.number,
+  ]),
+  injectedJavaScript: PropTypes.string,
+  scalesPageToFit: PropTypes.bool,
 };
 //
 // ObservableWebView.viewConfig = {

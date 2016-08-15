@@ -4,9 +4,8 @@
  */
 'use strict';
 
-var React = require('react-native');
-
-var {
+import React, { Component } from 'react';
+import {
   AppRegistry,
   BackAndroid,
   Text,
@@ -15,9 +14,7 @@ var {
   StyleSheet,
   ToolbarAndroid,
   ToastAndroid,
-} = React;
-
-var ToolbarAndroid = require('ToolbarAndroid');
+} from 'react-native';
 
 var TimerMixin = require('react-timer-mixin');
 
