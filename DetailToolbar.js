@@ -1,18 +1,18 @@
 'use strict';
 
-var React = require('react-native');
-var {
-  AppRegistry,
-  Platform,
-  PixelRatio,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  TouchableNativeFeedback,
-  TouchableHighlight,
-  ToastAndroid,
-} = React;
+import React, { Component } from 'react';
+import {
+    AppRegistry,
+    Platform,
+    PixelRatio,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    TouchableNativeFeedback,
+    TouchableHighlight,
+    ToastAndroid
+} from 'react-native';
 
 var SwitchAndroid = require('SwitchAndroid');
 var ToolbarAndroid = require('ToolbarAndroid');

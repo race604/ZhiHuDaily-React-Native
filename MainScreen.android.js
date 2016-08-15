@@ -1,19 +1,19 @@
 'use strict';
 
-var React = require('react-native');
-var {
-  AsyncStorage,
-  Image,
-  StyleSheet,
-  Text,
-  View,
-  DrawerLayoutAndroid,
-  ToolbarAndroid,
-  ToastAndroid,
-  BackAndroid,
-  TouchableOpacity,
-  Dimensions,
-} = React;
+import React, { Component } from 'react';
+import {
+     AsyncStorage,
+      Image,
+      StyleSheet,
+      Text,
+      View,
+      DrawerLayoutAndroid,
+      ToolbarAndroid,
+      ToastAndroid,
+      BackAndroid,
+      TouchableOpacity,
+      Dimensions,
+} from 'react-native';
 
 var Drawer = require('react-native-drawer');
 var StoriesList = require('./StoriesList');

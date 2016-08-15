@@ -1,24 +1,24 @@
 'use strict';
 
-var React = require('react-native');
-var {
-  AppRegistry,
-  PixelRatio,
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  ToolbarAndroid,
-  TouchableHighlight,
-  Animated,
-  Platform,
-  WebView,
-} = React;
+import React, { Component } from 'react';
+import {
+    AppRegistry,
+    PixelRatio,
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    ToolbarAndroid,
+    TouchableHighlight,
+    Animated,
+    Platform,
+    WebView
+} from 'react-native';
 
 var DetailToolbar = require('./DetailToolbar');
-var MyWebView = (Platform.OS === 'ios') ? WebView : require('./WebView');
 
 var BASE_URL = 'http://news.at.zhihu.com/api/4/news/';
+var STORY_BASE_URL = 'http://news-at.zhihu.com/story/';
 var REF_HEADER = 'header';
 var PIXELRATIO = PixelRatio.get();
 var HEADER_SIZE = 200;
@@ -80,28 +80,14 @@ var StoryScreen = React.createClass({
         var translateY = this.state.scrollValue.interpolate({
           inputRange: [0, HEADER_SIZE, HEADER_SIZE + 1], outputRange: [0, HEADER_SIZE, HEADER_SIZE]
         });
-        var html = '<!DOCTYPE html><html><head><link rel="stylesheet" type="text/css" href="'
-          + this.state.detail.css[0]
-          + '" /></head><body>' + this.state.detail.body
-          + '</body></html>';
+	var storyUrl = STORY_BASE_URL + this.props.story.id;
         return (
-          <View style={styles.container}>
-            <MyWebView
+          <View style={styles.container}>       
+             <WebView
               style={styles.content}
-              html={html}
-              onScrollChange={this.onWebViewScroll}/>
-            <Animated.View style={[styles.header, {transform: [{translateY}]}]}>
-              <Image
-                ref={REF_HEADER}
-                source={{uri: this.state.detail.image}}
-                style={styles.headerImage} >
-                <View style={styles.titleContainer}>
-                  <Text style={styles.title}>
-                    {this.props.story.title}
-                  </Text>
-                </View>
-              </Image>
-            </Animated.View>
+              source={{uri: storyUrl}}
+              scalesPageToFit={this.state.scalingEnabled}
+            />
             {toolbar}
           </View>
         );

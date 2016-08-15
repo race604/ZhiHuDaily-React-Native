@@ -1,17 +1,16 @@
 'use strict';
 
-var React = require('react-native');
-
-var {
+import React, { Component } from 'react';
+import {
   Image,
-  PixelRatio,
-  Platform,
-  StyleSheet,
-  Text,
-  TouchableHighlight,
-  TouchableNativeFeedback,
-  View,
-} = React;
+    PixelRatio,
+    Platform,
+    StyleSheet,
+    Text,
+    TouchableHighlight,
+    TouchableNativeFeedback,
+    View
+} from 'react-native';
 
 var TITLE_REF = 'title';
 
