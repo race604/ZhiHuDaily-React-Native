@@ -1,5 +1,5 @@
 'use strict';
-
+// sjfscnsckckmm
 var React = require('react-native');
 var {
   AppRegistry,
